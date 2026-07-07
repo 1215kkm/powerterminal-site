@@ -97,11 +97,11 @@
   h2.sec{text-align:center;font-size:clamp(26px,4vw,40px);font-weight:900;letter-spacing:-.02em;margin:8px auto 10px;text-wrap:balance}
   .lead{text-align:center;color:var(--muted);max-width:56ch;margin:0 auto 40px}
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .shots{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;align-items:start}
+  .shots{display:grid;grid-template-columns:1fr;gap:32px;align-items:start}
   .shots figure{margin:0}
-  .shots img{width:100%;max-height:480px;object-fit:contain;border-radius:12px;border:1px solid var(--line);display:block}
-  .shots figcaption{margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.55}
-  @media(max-width:760px){.shots{grid-template-columns:1fr}}
+  .shots img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);display:block}
+  .shots figure.portrait img{max-width:440px;margin:0 auto}   /* 세로(모바일) 스샷은 가운데, 너무 크지 않게 */
+  .shots figcaption{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.55;text-align:center}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);
         transition:transform .18s ease,box-shadow .18s ease}
   .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
@@ -225,7 +225,7 @@
       <h2 class="sec" data-i="shotsH">See it in action</h2>
       <div class="shots">
         <figure><img src="shots/grid.jpg" alt="Multiple sessions on PC" loading="lazy"><figcaption data-i="shot1">Several Claude Code sessions side by side on your PC — each with its own folder, model and status.</figcaption></figure>
-        <figure><img src="shots/mobile.jpg" alt="Mobile view" loading="lazy"><figcaption data-i="shot2">The same workspace on your phone in one column — tap a session tab to jump to it.</figcaption></figure>
+        <figure class="portrait"><img src="shots/mobile.jpg" alt="Mobile view" loading="lazy"><figcaption data-i="shot2">The same workspace on your phone in one column — tap a session tab to jump to it.</figcaption></figure>
         <figure><img src="shots/add.jpg" alt="Add a session" loading="lazy"><figcaption data-i="shot3">Add a session: reopen a previous folder from the grid, browse for one, or start a new project.</figcaption></figure>
         <figure><img src="shots/qr.jpg" alt="QR access" loading="lazy"><figcaption data-i="shot4">Scan the QR to open it on your phone — over Wi-Fi, or anywhere via the external link.</figcaption></figure>
       </div>
