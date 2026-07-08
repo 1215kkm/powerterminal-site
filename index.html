@@ -238,10 +238,10 @@
       <div class="eyebrow" data-i="eyeShots">SCREENSHOTS</div>
       <h2 class="sec" data-i="shotsH">See it in action</h2>
       <div class="shots">
-        <figure><img src="shots/grid.jpg" alt="Multiple sessions on PC" loading="lazy"><figcaption data-i="shot1">Several Claude Code sessions side by side on your PC — each with its own folder, model and status.</figcaption></figure>
-        <figure class="portrait"><img src="shots/mobile.jpg" alt="Mobile view" loading="lazy"><figcaption data-i="shot2">The same workspace on your phone in one column — tap a session tab to jump to it.</figcaption></figure>
-        <figure><img src="shots/add.jpg" alt="Add a session" loading="lazy"><figcaption data-i="shot3">Add a session: reopen a previous folder from the grid, browse for one, or start a new project.</figcaption></figure>
-        <figure><img src="shots/qr.jpg" alt="QR access" loading="lazy"><figcaption data-i="shot4">Scan the QR to open it on your phone — over Wi-Fi, or anywhere via the external link.</figcaption></figure>
+        <figure><img src="shots/grid.jpg" alt="Multiple sessions on PC" width="1920" height="908" loading="lazy"><figcaption data-i="shot1">Several Claude Code sessions side by side on your PC — each with its own folder, model and status.</figcaption></figure>
+        <figure><img src="shots/qr.jpg" alt="QR access" width="1920" height="908" loading="lazy"><figcaption data-i="shot4">Scan the QR to open it on your phone — over Wi-Fi, or anywhere via the external link.</figcaption></figure>
+        <figure class="portrait"><img src="shots/mobile.jpg" alt="Mobile view" width="367" height="820" loading="lazy"><figcaption data-i="shot2">The same workspace on your phone in one column — tap a session tab to jump to it.</figcaption></figure>
+        <figure><img src="shots/add.jpg" alt="Add a session" width="1920" height="908" loading="lazy"><figcaption data-i="shot3">Add a session: reopen a previous folder from the grid, browse for one, or start a new project.</figcaption></figure>
       </div>
     </div>
   </section>
@@ -321,6 +321,8 @@ function cp(btn,txt){navigator.clipboard&&navigator.clipboard.writeText(txt);con
 
 function toggleTheme(){const r=document.documentElement;const cur=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const nx=cur==='dark'?'light':'dark';r.setAttribute('data-theme',nx);localStorage.setItem('pt_site_theme',nx);document.getElementById('theme').textContent=nx==='dark'?'☀️':'🌙';}
 (function(){const t=localStorage.getItem('pt_site_theme');if(t){document.documentElement.setAttribute('data-theme',t);}const dark=(t||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark';document.getElementById('theme').textContent=dark?'☀️':'🌙';})();
+// '지금 시작하기' → 다운로드 버튼(#dl)까지 확실히 스크롤. 스크린샷 지연로드로 위치가 밀리면 한 번 더 보정.
+document.querySelectorAll('a[href="#dl"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var dl=document.getElementById('dl');if(!dl)return;dl.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){dl.scrollIntoView({behavior:'smooth',block:'center'});},550);});});
 </script>
 <!-- GoatCounter 방문 분석 (국가·시간·조회수) + 다운로드/별 클릭 이벤트 추적 -->
 <script data-goatcounter="https://1215kkm.goatcounter.com/count"
