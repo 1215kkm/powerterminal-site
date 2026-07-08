@@ -264,8 +264,8 @@
           <div class="step"><span class="n">4</span><div class="txt"><b data-i="st4">폰에서 쓰려면</b> — <span data-i="st4b">화면의 QR 버튼을 누르고 경고를 읽은 뒤 스캔.</span></div></div>
         </div>
         <div id="dl" style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;scroll-margin-top:80px">
-          <a class="btn primary" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-i="zipBtn">⬇ ZIP 바로 받기</a>
-          <a class="btn ghost" href="https://github.com/1215kkm/PowerTerminal" target="_blank" rel="noopener">⭐ Star on GitHub</a>
+          <a class="btn primary" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-i="zipBtn" data-goatcounter-click="download-zip" data-goatcounter-title="Download ZIP">⬇ ZIP 바로 받기</a>
+          <a class="btn ghost" href="https://github.com/1215kkm/PowerTerminal" target="_blank" rel="noopener" data-goatcounter-click="star-github" data-goatcounter-title="Star on GitHub">⭐ Star on GitHub</a>
         </div>
         <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:10px" data-i="zipNote">ZIP은 즉시 받아지고, git이 설치돼 있으면 런처가 첫 실행 때 자동 업데이트까지 연결해 줍니다.</p>
       </div>
@@ -323,5 +323,8 @@ function cp(btn,txt){navigator.clipboard&&navigator.clipboard.writeText(txt);con
 function toggleTheme(){const r=document.documentElement;const cur=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const nx=cur==='dark'?'light':'dark';r.setAttribute('data-theme',nx);localStorage.setItem('pt_site_theme',nx);document.getElementById('theme').textContent=nx==='dark'?'☀️':'🌙';}
 (function(){const t=localStorage.getItem('pt_site_theme');if(t){document.documentElement.setAttribute('data-theme',t);}const dark=(t||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark';document.getElementById('theme').textContent=dark?'☀️':'🌙';})();
 </script>
+<!-- GoatCounter 방문 분석 (국가·시간·조회수) + 다운로드/별 클릭 이벤트 추적 -->
+<script data-goatcounter="https://1215kkm.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
