@@ -311,7 +311,7 @@
           <div class="step"><span class="n">4</span><div class="txt"><b data-i="st4">폰에서 쓰려면</b> — <span data-i="st4b">화면의 QR 버튼을 누르고 경고를 읽은 뒤 스캔.</span></div></div>
         </div>
         <div id="dl" style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;scroll-margin-top:80px">
-          <a class="btn primary" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-goatcounter-click="download-zip" data-goatcounter-title="Download ZIP"><span data-i="zipBtn">⬇ ZIP 바로 받기</span><span class="dlver" id="dlver">v1.10.43</span></a>
+          <a class="btn primary" id="dlbtn" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-goatcounter-click="download-zip" data-goatcounter-title="Download ZIP"><span data-i="zipBtn">⬇ ZIP 바로 받기</span><span class="dlver" id="dlver">v1.10.43</span></a>
           <a class="btn ghost" href="https://github.com/1215kkm/PowerTerminal" target="_blank" rel="noopener" data-goatcounter-click="star-github" data-goatcounter-title="Star on GitHub">⭐ Star on GitHub</a>
         </div>
         <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:10px" data-i="zipNote">ZIP은 즉시 받아지고, git이 설치돼 있으면 런처가 첫 실행 때 자동 업데이트까지 연결해 줍니다.</p>
@@ -370,7 +370,17 @@ setOS(/Mac|iPhone|iPad|Linux/i.test(navigator.platform+navigator.userAgent)&&!/W
    GitHub 에서 최신 릴리스 태그를 읽어 채운다. 실패하면 적혀 있던 값 그대로 둔다. */
 fetch('https://api.github.com/repos/1215kkm/PowerTerminal/releases/latest')
   .then(r=>r.ok?r.json():null)
-  .then(j=>{if(j&&j.tag_name){['dlver','verBadge'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=j.tag_name;});}})
+  .then(j=>{
+    if(!j||!j.tag_name)return;
+    ['dlver','verBadge'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=j.tag_name;});
+    /* 받은 파일 이름에 버전이 남도록 PowerTerminal-<태그>.zip 로 바꾼다.
+       ⚠ 링크가 GitHub(다른 도메인)라 download 속성은 무시된다 — 파일명을 바꾸려면 첨부파일 이름 자체가 달라야 한다.
+       ⚠ 기본 href 는 PowerTerminal.zip 그대로 둔다: 이 조회가 실패해도 버튼이 살아있어야 하고,
+          그 고정 이름은 git 없는 사용자의 자동업데이트(start.command · update.ps1)가 쓰는 주소라 절대 없애면 안 된다. */
+    const asset=(j.assets||[]).find(a=>a.name==='PowerTerminal-'+j.tag_name+'.zip');
+    const btn=document.getElementById('dlbtn');
+    if(asset&&btn)btn.href=asset.browser_download_url;
+  })
   .catch(()=>{});
 
 function cp(btn,txt){navigator.clipboard&&navigator.clipboard.writeText(txt);const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,1200);}
