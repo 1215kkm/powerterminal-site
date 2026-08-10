@@ -306,7 +306,7 @@
           <div class="step"><span class="n">4</span><div class="txt"><b data-i="st4">폰에서 쓰려면</b> — <span data-i="st4b">화면의 QR 버튼을 누르고 경고를 읽은 뒤 스캔.</span></div></div>
         </div>
         <div id="dl" style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;scroll-margin-top:80px">
-          <a class="btn primary" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-goatcounter-click="download-zip" data-goatcounter-title="Download ZIP"><span data-i="zipBtn">⬇ ZIP 바로 받기</span><span class="dlver">v1.10.43</span></a>
+          <a class="btn primary" href="https://github.com/1215kkm/PowerTerminal/releases/latest/download/PowerTerminal.zip" data-goatcounter-click="download-zip" data-goatcounter-title="Download ZIP"><span data-i="zipBtn">⬇ ZIP 바로 받기</span><span class="dlver" id="dlver">v1.10.43</span></a>
           <a class="btn ghost" href="https://github.com/1215kkm/PowerTerminal" target="_blank" rel="noopener" data-goatcounter-click="star-github" data-goatcounter-title="Star on GitHub">⭐ Star on GitHub</a>
         </div>
         <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:10px" data-i="zipNote">ZIP은 즉시 받아지고, git이 설치돼 있으면 런처가 첫 실행 때 자동 업데이트까지 연결해 줍니다.</p>
@@ -360,6 +360,13 @@ function setOS(os){document.querySelectorAll('.tab').forEach(t=>t.classList.togg
   document.querySelectorAll('.osw').forEach(e=>e.style.display=os==='win'?'':'none');
   document.querySelectorAll('.osm').forEach(e=>e.style.display=os==='mac'?'':'none');}
 setOS(/Mac|iPhone|iPad|Linux/i.test(navigator.platform+navigator.userAgent)&&!/Win/i.test(navigator.platform)?'mac':'win');
+
+/* 다운로드 버튼의 버전 표시는 손으로 적어두면 반드시 낡는다(실제로 v1.10.43 에서 멈춰 있었다).
+   GitHub 에서 최신 릴리스 태그를 읽어 채운다. 실패하면 적혀 있던 값 그대로 둔다. */
+fetch('https://api.github.com/repos/1215kkm/PowerTerminal/releases/latest')
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{if(j&&j.tag_name){const e=document.getElementById('dlver');if(e)e.textContent=j.tag_name;}})
+  .catch(()=>{});
 
 function cp(btn,txt){navigator.clipboard&&navigator.clipboard.writeText(txt);const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,1200);}
 
