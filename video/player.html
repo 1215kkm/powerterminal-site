@@ -2109,7 +2109,7 @@ function speedSet(v){const was=PL.playing;if(was)pause();const pos=TOTAL?PL.t/TO
 $('bSpeed').onclick=()=>{if(EXP.on||EXP.batch)return;const i=SPEEDS.indexOf(cfg.speed||1);speedSet(SPEEDS[(i+1)%SPEEDS.length]);};
 speedLabel();
 window.__ccv={share:()=>SHARE,shareEnter,shareLeave,shareLink,batchPlan,fileName,exp:EXP,
-  pick:id=>{pause();cfg.video=id;PL.t=0;rebuild();buildAll();draw();},narr:async()=>{const n=await loadNarr(V());rebuild();return n;},wav:offlineWav,missing:()=>V().scenes.filter(s=>!recOf(V(),s)).map(s=>s.id),size:()=>[cv.width,cv.height],speed:v=>{if(v)speedSet(v);return cfg.speed;},setCfg:o=>{Object.assign(cfg,o);rebuild();},scenes:()=>V().scenes.map(s=>({id:s.id,t0:s._t0,dur:s._dur})),videos:()=>VIDEOS.map(v=>v.id),
+  pick:id=>{pause();cfg.video=id;PL.t=0;rebuild();buildAll();draw();},narr:async()=>{const n=await loadNarr(V());rebuild();return n;},wav:offlineWav,meta:()=>VIDEOS.map(v=>({id:v.id,cat:tr(catOf(v).name),title:tr(v.title),sub:tr(v.sub),full:v.full.map(s=>tr(s.narr)),short:v.short.map(s=>tr(s.narr))})),missing:()=>V().scenes.filter(s=>!recOf(V(),s)).map(s=>s.id),size:()=>[cv.width,cv.height],speed:v=>{if(v)speedSet(v);return cfg.speed;},setCfg:o=>{Object.assign(cfg,o);rebuild();},scenes:()=>V().scenes.map(s=>({id:s.id,t0:s._t0,dur:s._dur})),videos:()=>VIDEOS.map(v=>v.id),
   miss:()=>[...TR_MISS],render:t=>{render(t);},total:()=>TOTAL,fmt:fmtSet,afterEnd,
   // 영상별 대사 목록 (음성 만들 때 씀): [영상id/장면id, 대사]
   lines:()=>VIDEOS.flatMap(v=>{const seen=new Set();return [...(v.full||v.scenes),...(v.short||[])].filter(q=>!seen.has(q.id)&&seen.add(q.id)).map(q=>[recKey(v.id,q.id),tr(q.narr)]);})};
