@@ -1,0 +1,1669 @@
+<!doctype html>
+<!-- PowerTerminal 사용법 영상 — pominal.com 이 이 파일을 '사용법 영상' 칸에 넣어 보여 준다.
+     엔진은 크라우니클래스 영상설명서(km-CronwyClass/web/guide/video/player.html)를 그대로 가져왔고,
+     PT 화면 그림·장면 대본만 새로 썼다. 화면은 캔버스 한 장에 직접 그린다(스크린샷 아님).
+     목소리: 한국어 = km 목소리(narration.js), 영어 = 무료 영어 목소리(narration-en.js). 만드는 법은 narration/README.md -->
+<html lang="ko">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C3AED'/%3E%3Cstop offset='1' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='96' fill='url(%23g)'/%3E%3Cpath d='M150 190 L226 256 L150 322' fill='none' stroke='%23fff' stroke-width='34' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='268' y='304' width='110' height='30' rx='15' fill='%23fff'/%3E%3C/svg%3E">
+<script>
+/* 보는 사람 전용: 주소에 무엇이 붙어 오든 늘 '목차와 영상만' 화면으로 연다 (원본의 공유 화면).
+   아래 앱이 주소의 # 을 읽기 전에 고쳐 둔다. */
+(function(){try{
+  var h=(location.hash||'').replace('#','').split('-');
+  var en=h.indexOf('en')>=0;
+  var want='#share'+(en?'-en':'-ko');
+  if(location.hash!==want) history.replaceState(null,'',location.pathname+location.search+want);
+}catch(e){}})();
+</script>
+<style>
+/* 보는 사람에게는 목차와 영상만 — 설정 · 대본 · 내보내기 · 공유 안내 · 비율/언어 단추를 모두 감춘다.
+   (앱이 켜지기 전부터, 그리고 누가 body 의 표시를 떼어도 보이지 않게 body 표시에 기대지 않는다) */
+.settings,.script,.out,#outMsg,.scenes,.head .fmt,.sharebar,.brand{display:none!important}
+</style>
+<meta charset="utf-8">
+<title>PowerTerminal 사용법 영상</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 좌측 레일(목차 → 설정) + 우측 무대(캔버스 한 장이 곧 영상). 영상 편집기 느낌의 다크 단일 테마. 폰에선 무대가 위, 레일이 아래. */
+:root{
+  color-scheme: dark;
+  --bg:#0E0C12; --panel:#17151D; --panel-2:#201D28; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --ink:#F4F1F8; --ink-2:#BDB6CB; --ink-3:#8A8399;
+  --brand:#8A38F5; --brand-l:#A855F7; --brand-2:#D53A6B; --pink-l:#F472B6;
+  --grad:linear-gradient(135deg,#8A38F5 0%,#D53A6B 100%);
+  --ok:#22C55E; --warn:#F59E0B; --bad:#EF4444; --info:#3B82F6;
+  --sans:"IBM Plex Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --r-md:10px; --r-xl:16px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand-l);outline-offset:2px}
+.app{max-width:1560px;margin:0 auto;padding-inline:16px;padding-block:16px 40px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:1000px){.app{grid-template-columns:minmax(0,1fr)}.rail{order:2;position:static!important;max-height:none!important}.main{order:1}}
+
+/* ── 레일 ── */
+.rail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px;padding-right:2px;scrollbar-width:thin}
+.brand{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-xl);background:var(--panel);border:1px solid var(--line)}
+.brand svg{width:40px;height:33px;flex:none}
+.brand b{display:block;font-size:18px;letter-spacing:-.01em}
+.brand span{display:block;font-size:16px;color:var(--ink-3)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-xl);padding:14px}
+.panel>h2{margin:0 0 10px;font-size:16px;font-weight:600;color:var(--ink-3);letter-spacing:.08em}
+.grp+.grp{margin-top:12px}
+.grp h3{margin:0 0 6px;display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700}
+.grp h3 i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.vlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.vbtn{width:100%;display:flex;align-items:center;gap:10px;min-height:46px;padding:8px 10px;border-radius:var(--r-md);border:0;background:none;text-align:left;cursor:pointer}
+.vbtn:hover{background:var(--panel-2)}
+.vbtn .n{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:16px;font-weight:700;background:var(--panel-2);color:var(--ink-2)}
+.vbtn .t{flex:1;min-width:0}
+.vbtn .t small{display:block;font-size:16px;color:var(--ink-3)}
+.vbtn[aria-current="true"]{background:rgba(138,56,245,.16)}
+.vbtn[aria-current="true"] .n{background:var(--grad);color:#fff}
+.vsoon{display:flex;align-items:center;gap:10px;min-height:40px;padding:6px 10px;color:var(--ink-3);font-size:16px}
+.vsoon .n{width:28px;height:28px;border-radius:8px;border:1px dashed var(--line-2);display:grid;place-items:center}
+
+/* 설정 */
+.settings details{border-top:1px solid var(--line);padding-block:10px}
+.settings details:first-of-type{border-top:0;padding-top:0}
+.settings summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none;display:flex;align-items:center;gap:8px;min-height:36px}
+.settings summary::-webkit-details-marker{display:none}
+.settings summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(45deg);transition:transform .15s}
+.settings details[open] summary::after{transform:rotate(-135deg)}
+.row{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.row>label{font-size:16px;color:var(--ink-2);min-width:64px}
+.row input[type=range]{flex:1;min-width:120px;accent-color:var(--brand-l)}
+.row output{min-width:44px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+select,textarea{background:var(--panel-2);border:1px solid var(--line-2);border-radius:var(--r-md)}
+select{flex:1;min-width:0;height:40px;padding:0 10px}
+.segs{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--panel-2);flex:1}
+.segs button{flex:1;min-height:36px;border:0;border-radius:9px;background:none;color:var(--ink-2);cursor:pointer;font-weight:600}
+.segs button[aria-pressed="true"]{background:rgba(255,255,255,.12);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#bAuto{white-space:nowrap;font-size:15px}#bAuto[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.chip{min-height:38px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);background:none;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed="true"]{border-color:transparent;background:var(--grad);color:#fff;font-weight:600}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px;font-size:16px;color:var(--ink-2)}
+.tog input{width:20px;height:20px;accent-color:var(--brand-l)}
+.hint{margin:8px 0 0;font-size:16px;color:var(--ink-3);line-height:1.5}
+.hint b{color:var(--ink-2)}
+.script h2{margin:0;font-size:20px;letter-spacing:-.01em}
+.shead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.shead>div{flex:1;min-width:0;max-width:72ch}
+#bulkMsg:empty{display:none}
+.narr{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.nitem{display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,.02);transition:border-color .15s,background .15s}
+.nitem.on{border-color:rgba(168,85,247,.55);background:rgba(138,56,245,.07)}
+.nitem.drag{border-color:var(--pink-l);background:rgba(244,114,182,.08)}
+.nside{display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.nside button{border:0;background:var(--panel-2);border-radius:10px;width:52px;height:44px;font-size:18px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+.nside button:hover{background:var(--grad);color:#fff}
+.nside small{font-size:16px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.nmain{min-width:0}
+@media (max-width:560px){.nitem{grid-template-columns:minmax(0,1fr)}.nside{flex-direction:row;align-items:center;gap:10px}}
+.nhead{display:flex;align-items:center;gap:8px;font-size:16px}
+.nhead b{font-weight:700}
+.nhead .num{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.badge{margin-left:auto;font-size:16px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.badge.tts{color:var(--ink-3);background:rgba(255,255,255,.06)}
+.badge.rec{color:#86EFAC;background:rgba(34,197,94,.14)}
+.badge.live{color:#FCA5A5;background:rgba(239,68,68,.16)}
+.nitem textarea{width:100%;margin-top:8px;min-height:64px;padding:8px 10px;resize:vertical;line-height:1.5}
+.nbtns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.sbtn{min-height:36px;padding:0 10px;border-radius:9px;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer;font-size:16px;display:inline-flex;align-items:center;gap:6px}
+.sbtn:hover{border-color:var(--brand-l)}
+.sbtn.rec{color:#FCA5A5}
+.sbtn.recording{background:#7F1D1D;border-color:#EF4444;color:#fff}
+.sbtn:disabled{opacity:.4;cursor:not-allowed}
+.nmsg{margin-top:6px;font-size:16px;color:var(--warn)}
+.nmsg:empty{display:none}
+
+/* ── 무대 ── */
+.main{display:flex;flex-direction:column;gap:12px;min-width:0}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.head .eyebrow{font-size:16px;color:var(--ink-3);display:flex;gap:8px;align-items:center}
+.head .eyebrow i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--brand-l))}
+.head h1{margin:2px 0 0;font-size:28px;letter-spacing:-.02em;text-wrap:balance}
+.head .meta{font-size:16px;color:var(--ink-3)}
+.fmt{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.fmt button{min-height:40px;padding:0 14px;border:0;border-radius:9px;background:none;color:var(--ink-2);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px}
+.fmt button i{display:inline-block;border:2px solid currentColor;border-radius:3px}
+.fmt button[aria-pressed="true"]{background:var(--grad);color:#fff}
+.stagebox{display:flex;justify-content:center;background:#08070B;border:1px solid var(--line);border-radius:18px;padding:12px}
+.stage{position:relative;overflow:hidden;border-radius:12px;background:#000;max-width:100%;cursor:pointer}
+.stage.pc{width:100%;aspect-ratio:16/9}
+.stage.short{height:min(74vh,880px);aspect-ratio:9/16}
+.stage canvas{display:block;width:100%;height:100%}
+.stage:fullscreen{border-radius:0;display:flex;align-items:center;justify-content:center;background:#000;cursor:default}
+.stage:fullscreen canvas{width:auto;height:auto;max-width:100vw;max-height:100vh;aspect-ratio:var(--ar)}
+.cover{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,7,11,.35)}
+.cover button{width:88px;height:88px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(14,12,18,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;display:grid;place-items:center}
+.cover svg{width:32px;height:32px;margin-left:5px}
+.busy{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(14,12,18,.85);border:1px solid rgba(239,68,68,.4);font-size:16px}
+.busy i{width:10px;height:10px;border-radius:50%;background:var(--bad);box-shadow:0 0 0 4px rgba(239,68,68,.25)}
+.busy button{min-height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer}
+.ctl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.ib{flex:none;width:42px;height:42px;border-radius:10px;border:0;background:var(--panel-2);cursor:pointer;display:grid;place-items:center}
+.ib:hover{background:#2A2633}
+.ib svg{width:18px;height:18px}
+.tm{flex:none;min-width:104px;text-align:center;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+#scrub{flex:1;min-width:0;accent-color:var(--brand-l);height:28px}
+.scenes{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.scenes button{flex:none;min-height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--ink-2);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.scenes button b{font-variant-numeric:tabular-nums;color:var(--ink-3);font-weight:600}
+.scenes button[aria-current="true"]{border-color:rgba(168,85,247,.6);color:#fff;background:rgba(138,56,245,.14)}
+.out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:1180px){.out{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.out{grid-template-columns:minmax(0,1fr)}}
+.obtn{display:flex;align-items:center;gap:12px;min-height:64px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);cursor:pointer;text-align:left}
+.obtn:hover{border-color:var(--brand-l)}
+.obtn.primary{background:var(--grad);border-color:transparent;color:#fff}
+.obtn svg{width:24px;height:24px;flex:none}
+.obtn b{display:block}
+.obtn small{display:block;font-size:16px;opacity:.8}
+.notice{padding:12px 14px;border-radius:14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);font-size:16px;line-height:1.55}
+.notice .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.notice.ok{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3)}
+.notice.bad{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)}
+body.solo .app{grid-template-columns:minmax(0,1fr);max-width:1280px}
+body.solo .rail{display:none}
+/* 공유 화면 — 왼쪽 목차 + 오른쪽 영상만. 만드는 사람이 쓰는 설정·대본·내보내기는 숨긴다 */
+body.share .settings,body.share .script,body.share .out,body.share #outMsg,body.share .scenes,body.share .head .fmt{display:none!important}
+.sharebar{display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:14px;background:rgba(138,56,245,.14);border:1px solid rgba(168,85,247,.45);font-size:16px;line-height:1.5}
+body.share.preview .sharebar{display:flex}
+.sharebar code{user-select:all;word-break:break-all;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:8px}
+.sharebar .sbtn{margin-left:auto}
+/* 전체 내보내기 중 — 영상 바꾸기·설정을 잠근다 (그만 단추는 영상 위에 있다) */
+body.batch .rail,body.batch .head .fmt,body.batch .ctl,body.batch .scenes,body.batch .script,body.batch .out{pointer-events:none;opacity:.45}
+@media (prefers-reduced-motion:reduce){.settings summary::after{transition:none}}
+/* ✅ 2026-10-09 CEO: 영상설명서 배경을 다른 페이지처럼 흰색으로. 목차 · 제목 글자는 흰 바탕에서 잘 보이는 진한 색
+   (본문 #17131F 는 흰 바탕 대비 약 17:1, 가장 옅은 보조 글자 #5E566F 도 약 6.6:1 — 기준 4.5:1 이상). 영상 화면 자체는 그대로다. */
+:root{
+  color-scheme: light;
+  --bg:#FFFFFF; --panel:#F7F5FB; --panel-2:#EDE8F5; --line:rgba(23,19,31,.10); --line-2:rgba(23,19,31,.20);
+  --ink:#17131F; --ink-2:#3F3850; --ink-3:#5E566F;
+}
+.vbtn[aria-current="true"]{background:rgba(138,56,245,.12)}
+.vbtn[aria-current="true"] .t{color:#5B21B6;font-weight:700}
+.ib:hover{background:#DDD3EE}
+.stagebox{background:var(--panel)}
+.busy{color:#fff}.busy button{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff}
+</style>
+
+<div class="app" id="app">
+  <aside class="rail" id="rail">
+    <div class="brand">
+      <svg viewBox="0 0 64 52" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A38F5"/><stop offset="1" stop-color="#D53A6B"/></linearGradient></defs><path d="M8 42 L12 14 L24 27 L32 8 L40 27 L52 14 L56 42 Z" fill="url(#lg)"/><rect x="8" y="44" width="48" height="6" rx="3" fill="url(#lg)"/></svg>
+      <div><b>PowerTerminal 사용법 영상</b><span>기본 · 요청 · AI 도구</span></div>
+    </div>
+
+    <nav class="panel" aria-label="영상 목차">
+      <h2>목차</h2>
+      <div id="toc"></div>
+    </nav>
+
+    <section class="panel settings" aria-label="설정">
+      <h2>설정</h2>
+
+      <details open id="dNarr">
+        <summary>나레이션</summary>
+        <div class="row"><label for="voice">임시 목소리</label><select id="voice"></select></div>
+        <div class="row"><label for="rate">말 빠르기</label><input type="range" id="rate" min="0.8" max="1.4" step="0.05"><output id="rateO"></output></div>
+        <div class="row"><label>쓸 소리</label>
+          <div class="segs" role="group" aria-label="나레이션 소리 고르기">
+            <button type="button" data-nm="rec">내 녹음</button>
+            <button type="button" data-nm="tts">임시 목소리</button>
+          </div>
+        </div>
+        <p class="hint">장면별 대사와 음성 파일은 영상 아래 <b>「장면별 나레이션 대본」</b>에서 바꿔요. 음성 파일이 없는 장면만 임시 목소리로 읽어요.</p>
+      </details>
+
+      <details id="dBgm">
+        <summary>배경음</summary>
+        <div class="chips" id="bgmChips" role="group" aria-label="배경음 고르기"></div>
+        <div class="row"><button type="button" class="sbtn" id="bgmUp">내 음악 파일 올리기</button><span class="hint" id="bgmName" style="margin:0"></span></div>
+        <div class="row"><label for="bgmVol">크기</label><input type="range" id="bgmVol" min="0" max="1" step="0.05"><output id="bgmVolO"></output></div>
+        <label class="tog">말할 때 배경음 줄이기 <input type="checkbox" id="duck"></label>
+      </details>
+
+      <details id="dSfx">
+        <summary>효과음</summary>
+        <div id="sfxTogs"></div>
+        <div class="row"><label for="sfxVol">크기</label><input type="range" id="sfxVol" min="0" max="1" step="0.05"><output id="sfxVolO"></output></div>
+      </details>
+
+      <details id="dCap">
+        <summary>자막 · 전체 소리</summary>
+        <label class="tog">자막 보이기 <input type="checkbox" id="capOn"></label>
+        <div class="row"><label>자막 크기</label>
+          <div class="segs" role="group" aria-label="자막 크기">
+            <button type="button" data-cs="0.85">작게</button><button type="button" data-cs="1">보통</button><button type="button" data-cs="1.2">크게</button>
+          </div>
+        </div>
+        <div class="row"><label for="mVol">전체 소리</label><input type="range" id="mVol" min="0" max="1" step="0.05"><output id="mVolO"></output></div>
+        <div class="row"><button type="button" class="sbtn" id="reset">설정 처음으로 되돌리기</button></div>
+        <p class="hint" id="resetMsg"></p>
+      </details>
+    </section>
+  </aside>
+
+  <main class="main">
+    <div class="head">
+      <div>
+        <div class="eyebrow" id="eyebrow"><i></i><span></span></div>
+        <h1 id="vTitle">설치하고 첫 세션 열기</h1>
+        <div class="meta" id="vMeta"></div>
+      </div>
+      <div class="fmt" role="group" aria-label="화면 비율">
+        <button type="button" data-fmt="pc"><i style="width:20px;height:12px"></i>PC 16:9</button>
+        <button type="button" data-fmt="short"><i style="width:11px;height:18px"></i>쇼츠 9:16</button>
+      </div>
+      <div class="fmt" role="group" aria-label="언어 · Language">
+        <button type="button" data-lang="ko">한국어</button>
+        <button type="button" data-lang="en">English</button>
+      </div>
+    </div>
+
+    <div class="sharebar" id="shareBar"><span id="shareTxt"></span><button type="button" class="sbtn" id="shareBack">만드는 화면으로 돌아가기</button></div>
+
+    <div class="stagebox">
+      <div class="stage pc" id="stage" role="region" aria-label="설명 영상. 누르면 재생하거나 멈춥니다.">
+        <canvas id="cv" width="1920" height="1080"></canvas>
+        <div class="cover" id="cover"><button type="button" id="bigPlay" aria-label="재생"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff"/></svg></button></div>
+        <div class="busy" id="busy" hidden><i></i><span id="busyT">영상 만드는 중</span><button type="button" id="busyX">그만</button></div>
+      </div>
+    </div>
+
+    <div class="ctl">
+      <button class="ib" type="button" id="bPlay" aria-label="재생"><svg viewBox="0 0 16 16" id="icPlay"><path d="M4 2.5l9 5.5-9 5.5z" fill="currentColor"/></svg></button>
+      <button class="ib" type="button" id="bRe" aria-label="처음부터"><svg viewBox="0 0 16 16"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span class="tm" id="tm">0:00 / 0:00</span>
+      <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="재생 위치">
+      <button class="chip" type="button" id="bAuto" aria-pressed="false" title="누를 때마다 바뀌어요: 한 편만 · 이어서 재생 · 하나 반복 · 전체 반복">한 편만</button>
+      <button class="ib" type="button" id="bFs" aria-label="전체 화면"><svg viewBox="0 0 16 16"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+
+    <div class="scenes" id="scenes" aria-label="장면으로 이동"></div>
+
+    <section class="panel script" aria-label="장면별 나레이션 대본">
+      <div class="shead">
+        <div><h2>장면별 나레이션 대본</h2>
+          <p class="hint">장면마다 읽을 대사가 적혀 있어요. 대사를 고치거나, 그 칸에 <b>음성 파일을 올리면</b>(끌어다 놓아도 돼요) 임시 목소리 대신 그 파일이 나옵니다. 장면 길이는 음성 길이에 맞춰 늘어나고 줄어요.</p></div>
+        <button type="button" class="sbtn" id="bulkUp">음성 파일 한꺼번에 올리기</button>
+      </div>
+      <p class="hint" id="bulkMsg"></p>
+      <div class="narr" id="narr"></div>
+    </section>
+
+    <div class="out">
+      <button type="button" class="obtn primary" id="bMp4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg><span><b>이 영상만 따로 저장 (MP4)</b><small id="mp4Sub">지금 고른 비율 그대로 · 영상 파일 하나</small></span></button>
+      <button type="button" class="obtn" id="bAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="9" rx="2"/><rect x="9" y="11" width="12" height="9" rx="2"/></svg><span><b>전체 영상 내보내기</b><small>영상마다 MP4 하나씩 · PC · 모바일</small></span></button>
+      <button type="button" class="obtn" id="bShare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.9l7.6-3.8M8.2 13.1l7.6 3.8"/></svg><span><b>페이지 공유하기</b><small>목차와 영상만 보이는 화면 · 설정은 숨김</small></span></button>
+    </div>
+    <div id="outMsg"></div>
+  </main>
+</div>
+
+<script src="lang-en.js"></script>
+<script src="narration.js"></script>
+<script src="narration-en.js"></script>
+<script data-app>
+(()=>{
+'use strict';
+
+/* 저장용 원본 — 화면을 고치기 전에 문서를 그대로 떠 둔다 (이 영상만 따로 저장할 때 씀) */
+const SRC=(()=>{try{const d=document.documentElement.cloneNode(true);d.querySelectorAll('script:not([data-app])').forEach(s=>s.remove());const sc=d.querySelector('#solo-config');if(sc)sc.remove();return '<!doctype html>\n'+d.outerHTML;}catch(e){return '';}})();
+const SOLO=window.SOLO||null;
+
+/* ───────────────────────── 기본 도구 ───────────────────────── */
+const $=id=>document.getElementById(id);
+
+/* ───────────────────────── 언어 (한국어 · English) ─────────────────────────
+   화면에 그리는 글은 전부 한국어로 적혀 있고, 영문판은 그리기 직전에 tr() 가 lang-en.js 의 표로 바꾼다.
+   언어를 바꾸면 페이지를 다시 연다 (화면 속 위치 값들이 글자 너비에 맞춰 처음에 한 번 계산되기 때문). */
+let LANG='ko';
+const HASH=(()=>{try{return (location.hash||'').replace('#','').split('-');}catch(e){return [];}})();
+let SHARE=HASH.includes('share');   // 공유 화면: 목차와 영상만
+try{const h=HASH.find(x=>x==='en'||x==='ko');if(h)LANG=h;else{const s0=JSON.parse(localStorage.getItem('pt-video-cfg-v1')||'null');if(s0&&s0.lang==='en')LANG='en';}}catch(e){}
+if(window.SOLO&&window.SOLO.cfg&&window.SOLO.cfg.lang)LANG=window.SOLO.cfg.lang==='en'?'en':'ko';
+const EN=window.EN_TEXT||{},TR_MISS=new Set();   // TR_MISS: 영어로 못 바꾼 글 (점검용)
+const TR_RULES=[
+  [/^(.+?)(  ✓)$/,m=>tr(m[1])+m[2]],
+  [/^교실코드: (.+)$/,m=>'Room: '+m[1]],
+  [/^(\d+)개 파일이 전송되었습니다\.$/,m=>m[1]+(m[1]==='1'?' file sent.':' files sent.')],
+  [/^전송 중: (.+)$/,m=>'Sending: '+tr(m[1])],
+  [/^이 PC \+ 접속한 학생 모두 \((\d+)명\)$/,m=>'This PC + all connected students ('+m[1]+')'],
+  [/^\((\d+)명 접속중 \/ 총 (\d+)명\)$/,m=>'('+m[1]+' online / '+m[2]+' total)'],
+  [/^올리는 중 (.+) · (\d+%)$/,m=>'Uploading '+tr(m[1])+' · '+m[2]],
+  [/^파일을 올리거나 목록에서 '반에 올리기' 를 누르면 '(.+)' 반자료로 가요$/,m=>"Upload a file or click 'Add to class' to share it with "+tr(m[1])],
+  [/^(.+) 반자료$/,m=>tr(m[1])+' materials'],
+  [/^(.+) ▾$/,m=>tr(m[1])+' ▾'],
+  [/^총 (\d+)건$/,m=>m[1]+' total'],
+  [/^제출요청: (.+)$/,m=>'Request: '+tr(m[1])],
+  [/^(\d+)\/(\d+)명 제출$/,m=>m[1]+'/'+m[2]+' submitted'],
+  [/^• (.+)$/,m=>'• '+tr(m[1])],
+  [/^'(.+)'$/,m=>"'"+tr(m[1])+"'"],
+  [/^(\d+)행 × (\d+)열 = (\d+)석$/,m=>m[1]+' rows × '+m[2]+' cols = '+m[3]+' seats'],
+  [/^(\d+)번 좌석을 선택하시겠습니까\?$/,m=>'Choose seat '+m[1]+'?'],
+  [/^번호(\d+)$/,m=>'No.'+m[1]],
+  [/^(\d+)\. (.+)$/,m=>m[1]+'. '+tr(m[2])],
+  [/^(.+) 사용법$/,m=>tr(m[1])+' · Guide'],
+  [/^(.+)_이력서(\.\w+)$/,m=>tr(m[1])+'_resume'+m[2]],
+  [/^(.+) \((Guest|[A-Z0-9]+)\)$/,m=>tr(m[1])+' ('+m[2]+')'],
+];
+function tr(s){
+  if(LANG!=='en'||typeof s!=='string'||!/[가-힣]/.test(s))return s;
+  const e=EN[s];if(e!=null)return e;
+  for(const [re,f] of TR_RULES){const m=s.match(re);if(m)return f(m);}
+  for(const sep of [' · ',' - ']){if(s.includes(sep))return s.split(sep).map(tr).join(sep);}
+  TR_MISS.add(s);return s;
+}
+const FONT='"IBM Plex Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif';
+const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v;
+const lerp=(a,b,k)=>a+(b-a)*k;
+const eIO=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eOut=x=>1-Math.pow(1-x,3);
+const eBack=x=>{const c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+const seg=(p,a,b)=>eOut(clamp((p-a)/(b-a)));
+const segL=(p,a,b)=>clamp((p-a)/(b-a));
+const fmtT=s=>{s=Math.max(0,s);return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');};
+function kf(list,p){
+  if(p<=list[0][0])return list[0].slice(1);
+  for(let i=0;i<list.length-1;i++){const a=list[i],b=list[i+1];if(p<=b[0]){const k=eIO(clamp((p-a[0])/((b[0]-a[0])||1)));return a.slice(1).map((v,j)=>lerp(v,b[j+1],k));}}
+  return list[list.length-1].slice(1);
+}
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(+r||0,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();};
+}
+function RR(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);}
+function T(c,s,x,y,o={}){s=tr(s);c.font=`${o.w||500} ${o.s||16}px ${FONT}`;c.fillStyle=o.c||'#1F2937';c.textAlign=o.a||'left';c.textBaseline=o.b||'middle';c.fillText(s,x,y);}
+function TW(c,s,size,w){s=tr(s);c.font=`${w||500} ${size}px ${FONT}`;return c.measureText(s).width;}
+function gradH(c,x,w,a='#8A38F5',b='#D53A6B'){const g=c.createLinearGradient(x,0,x+w,0);g.addColorStop(0,a);g.addColorStop(1,b);return g;}
+function gradD(c,x,y,w,h,a='#8A38F5',b='#D53A6B'){const g=c.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,a);g.addColorStop(1,b);return g;}
+
+/* 아이콘 (24칸 선 그림) */
+const IC={
+  home:'M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z',
+  check:'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11',
+  folder:'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  video:'M3 7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 10l5-3v10l-5-3',
+  clip:'M9 3h6v3H9zM7 4H5v17h14V4h-2M8 11h8M8 15h6',
+  monitor:'M3 4h18v12H3zM8 21h8M12 16v5',
+  gear:'M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1',
+  plus:'M12 5v14M5 12h14',
+  eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6',
+  down:'M12 3v12M7 10l5 5 5-5M4 21h16',
+  link:'M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1',
+  cal:'M4 5h16v16H4zM4 10h16M8 3v4M16 3v4',
+  minus:'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M8 12h8',
+  laptop:'M4 5h16v10H4zM2 19h20',
+  chev:'M6 9l6 6 6-6',
+  bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4',
+  msg:'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+  user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8a4 4 0 1 0 0-8',
+  search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4',
+  ok:'M5 12l5 5 9-10',
+};
+const ICP={};
+function icon(c,name,x,y,size,color,lw=2){if(!ICP[name])ICP[name]=new Path2D(IC[name]);c.save();c.translate(x,y);c.scale(size/24,size/24);c.strokeStyle=color;c.lineWidth=lw;c.lineCap='round';c.lineJoin='round';c.stroke(ICP[name]);c.restore();}
+/* ───────────────────────── PowerTerminal 로고 ─────────────────────────
+   엔진(인트로·마무리·쇼츠 머리)이 crown() 을 부른다 — 이름은 그대로 두고 PT 아이콘을 그린다.
+   x,y: 왼쪽 위, w: 차지할 너비(아이콘은 w*.8 정사각형), fillK: 바탕이 차오름, strokeK: 테두리가 그려짐 */
+const PT_CHEV=new Path2D('M150 190 L226 256 L150 322');
+function crown(c,x,y,w,alpha=1,fillK=1,strokeK=1){
+  const s=w*.8,k=s/512;c.save();c.globalAlpha*=alpha;c.translate(x+w/2-s/2,y);c.scale(k,k);
+  if(fillK>0){c.save();c.globalAlpha*=fillK;const g=c.createLinearGradient(0,0,512,512);g.addColorStop(0,'#7C3AED');g.addColorStop(1,'#EC4899');c.fillStyle=g;RR(c,0,0,512,512,96);c.fill();c.restore();}
+  if(strokeK<1){c.save();c.setLineDash([2000*strokeK,4000]);c.strokeStyle='#C084FC';c.lineWidth=14;RR(c,0,0,512,512,96);c.stroke();c.restore();}
+  const a=fillK>0?1:strokeK;c.save();c.globalAlpha*=a;c.strokeStyle='#fff';c.lineWidth=34;c.lineCap='round';c.lineJoin='round';c.stroke(PT_CHEV);
+  c.fillStyle='#fff';RR(c,268,304,110*Math.min(1,fillK*1.4),30,15);c.fill();c.restore();
+  c.restore();
+}
+const BRAND_NAME='PowerTerminal';
+
+/* ───────────────────────── PT 화면 그리기 ─────────────────────────
+   무대(1600×1000)가 곧 PT 창이다 — 실제 PT 를 1600×1000 으로 띄운 화면을 보고 그대로 옮겼다(색도 화면에서 뽑음). */
+const SW=1600,SH=1000;
+const WX=0,WY=0,WK=1;
+const wp=(x,y)=>[x,y];
+const wr=(x,y,w,h)=>({x,y,w,h});
+const MONO='Consolas,"D2Coding","Cascadia Mono","Malgun Gothic",monospace';
+function TM(c,s,x,y,o={}){s=tr(s);c.font=`${o.w||400} ${o.s||13}px ${MONO}`;c.fillStyle=o.c||'#E5E7EB';c.textAlign=o.a||'left';c.textBaseline='middle';c.fillText(s,x,y);}
+const C={page:'#0E1420',pane:'#111827',line:'#374151',term:'#283543',row:'#1F2937',ink:'#F3F4F6',dim:'#9CA3AF',mute:'#6B7280',blue:'#3B82F6',green:'#22C55E',red:'#EF4444',vio:'#8A38F5'};
+const gradPT=(c,x,y,w,h)=>gradD(c,x,y,w,h,'#7F3AEA','#E9479A');
+function btn(c,x,y,w,h,label,o={}){
+  const hot=o.hot||0;c.save();
+  if(o.grad){c.fillStyle=gradPT(c,x,y,w,h);RR(c,x,y,w,h,o.r||7);c.fill();}
+  else{c.fillStyle=o.bg||'#374151';RR(c,x,y,w,h,o.r||7);c.fill();}
+  if(o.border){c.strokeStyle=o.border;c.lineWidth=1.5;RR(c,x,y,w,h,o.r||7);c.stroke();}
+  if(hot>0){c.fillStyle=`rgba(255,255,255,${.22*hot})`;RR(c,x,y,w,h,o.r||7);c.fill();c.strokeStyle=`rgba(255,255,255,${.6*hot})`;c.lineWidth=2;RR(c,x,y,w,h,o.r||7);c.stroke();}
+  T(c,label,x+w/2,y+h/2+1,{s:o.s||13,w:o.w||700,c:o.c||(o.grad?'#fff':'#E5E7EB'),a:'center'});c.restore();
+}
+
+/* 머리줄 단추 — [이름, x, 너비, 글, 모양] (실제 화면 위치) */
+const HB=[['helper',723,104,'🧭 도우미 설치','grad'],['theme',838,34,'✳'],['sound',884,42,'🔇'],['mind',937,40,'⑂'],['qr',987,40,'▦'],['code',1036,46,'</>'],
+  ['book',1092,41,'📖'],['gear',1141,40,'⚙'],['mail',1189,48,'✉ 2','green'],['lang',1246,118,'🌐 한국어  ▾'],['quit',1373,40,'⏻','red'],['auto',1423,88,'⏱ 자동 실행'],['add',1521,66,'+ 세션','grad']];
+const hb=id=>HB.find(b=>b[0]===id);
+const HBP=id=>{const b=hb(id);return [b[1]+b[2]/2,28];};
+const HBR=id=>{const b=hb(id);return wr(b[1],12,b[2],33);};
+function ptHeader(c,st){
+  c.fillStyle=C.page;c.fillRect(0,0,SW,58);
+  T(c,'🚀',22,20,{s:16,c:'#A855F7'});
+  const g=gradH(c,14,112,'#A855F7','#EC4899');c.font=`800 17px ${FONT}`;c.fillStyle=g;c.textBaseline='middle';c.textAlign='left';c.fillText('PowerTerminal',14,38);
+  c.fillStyle='#374151';RR(c,146,20,46,16,8);c.fill();T(c,'v1.89.5',169,28.5,{s:10,c:'#D1D5DB',a:'center'});
+  c.fillStyle='#EF4444';c.fillRect(14,50,98,3);T(c,'85% · 8.4GB 남음',118,52,{s:9,w:700,c:'#EF4444'});
+  const bar=(x,lab,v,col)=>{T(c,lab,x,28,{s:11,c:'#9CA3AF'});const lx=x+TW(c,lab,11)+8;c.fillStyle='#374151';RR(c,lx,25,80,6,3);c.fill();c.fillStyle=col;RR(c,lx,25,80*v,6,3);c.fill();T(c,Math.round(v*100)+'%',lx+88,28,{s:11,w:700,c:'#E5E7EB'});};
+  bar(204,'클로드 세션',.22,'#3B82F6');bar(392,'클로드 주간',.64,'#F59E0B');
+  HB.forEach(([id,x,w,l,k])=>{
+    const hot=st.hb===id?1:0,glow=st.hbGlow===id?1:0;let label=l;
+    if(id==='helper'&&st.helperOn!=null)label=st.helperOn?'🧭 도우미 · 켜짐':'🧭 도우미 · 꺼짐';
+    if(glow){c.save();c.shadowColor='#E879F9';c.shadowBlur=18;c.fillStyle='rgba(232,121,249,.0)';RR(c,x,12,w,33,8);c.fill();c.restore();}
+    btn(c,x,12,w,33,label,{grad:k==='grad',bg:k==='green'?'#15803D':k==='red'?'#1F2937':'#374151',c:k==='red'?'#EF4444':undefined,s:id==='lang'||id==='auto'||id==='helper'||id==='add'?13:14,hot});
+  });
+}
+
+/* 세션 칸 */
+function paneGeo(i,n,split){const W0=(split||SW)-20,w=(W0-(n-1)*10)/n;return{x:10+i*(w+10),y:66,w,h:900};}
+const CHIPS=['진행해','다했어?','했어','너가해','1','2','3','+','↻'];
+function chipRects(g){const out=[];let x=g.x+10;const y=g.y+g.h-152;CHIPS.forEach((l,k)=>{const w=k>=4?24:TW(null2(),l,11,500)+18;out.push({x,y,w,h:24,l});x+=w+6;});return out;}
+let _mc=null;function null2(){if(!_mc)_mc=document.createElement('canvas').getContext('2d');return _mc;}
+const PP={   // 칸 안의 자리 (커서·강조에 씀)
+  send:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+g.w/2,g.y+g.h-25];},
+  sendR:(i,n,s)=>{const g=paneGeo(i,n,s);return wr(g.x+10,g.y+g.h-42,g.w-20,34);},
+  input:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+10+(g.w-96)/2,g.y+g.h-82];},
+  inputR:(i,n,s)=>{const g=paneGeo(i,n,s);return wr(g.x+10,g.y+g.h-114,g.w-96,64);},
+  chip:(i,n,k,s)=>{const r=chipRects(paneGeo(i,n,s))[k];return[r.x+r.w/2,r.y+12];},
+  chipsR:(i,n,s)=>{const rs=chipRects(paneGeo(i,n,s));const a=rs[0],b=rs[6];return wr(a.x,a.y,b.x+b.w-a.x,24);},
+  globe:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+g.w-21,g.y+61];},
+  globeR:(i,n,s)=>{const g=paneGeo(i,n,s);return wr(g.x+g.w-36,g.y+50,30,22);},
+  hist:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+g.w-45,g.y+g.h-93];},
+  clip:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+g.w-64,g.y+g.h-63];},
+  mic:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+g.w-26,g.y+g.h-63];},
+  model:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+168,g.y+61];},
+  modelR:(i,n,s)=>{const g=paneGeo(i,n,s);return wr(g.x+110,g.y+50,116,22);},
+  title:(i,n,s)=>{const g=paneGeo(i,n,s);return[g.x+80,g.y+19];},
+  term:(i,n,s)=>{const g=paneGeo(i,n,s);return wr(g.x+6,g.y+82,g.w-12,g.h-82-176);},
+};
+/* 터미널에 찍히는 글 — [글, 색, 굵게, 바탕] */
+const L_WELCOME=[['',''],['╭─────────────────────────────╮','#D97757'],['│ ✻ Welcome to Claude Code    │','#D97757'],['╰─────────────────────────────╯','#D97757']];
+const reqLine=t=>[' > '+t,'#F3F4F6',0,'#3A3F48'];
+function termWork(req,steps,answer){return[...L_WELCOME,['',''],reqLine(req),['',''],...steps.flatMap(s=>[['● '+s[0],'#86EFAC',1],['  ⎿  '+s[1],'#9CA3AF'],['','']]),...(answer||[]).map(a=>['● '+a,'#F3F4F6'])];}
+const T_LOGIN=termWork('로그인 화면 만들어줘',[['Read(src/App.tsx)','Read 120 lines'],['Write(src/pages/Login.tsx)','Wrote 86 lines']],['로그인 화면을 만들었습니다.','  이메일·비밀번호 칸과 로그인 단추가 있어요.']);
+const T_API=termWork('글 목록 API 고쳐줘',[['Read(api/posts.js)','Read 64 lines'],['Edit(api/posts.js)','Updated 12 lines']],['최신 글이 맨 위에 오게 고쳤습니다.']);
+const T_APP=termWork('알림 설정 화면 추가해줘',[['Read(app/settings.tsx)','Read 210 lines'],['Write(app/Notify.tsx)','Wrote 140 lines']],['알림 켜기·끄기 화면을 더했습니다.']);
+const T_LAND=termWork('첫 화면 문구 다듬어줘',[['Read(index.html)','Read 88 lines'],['Edit(index.html)','Updated 6 lines']],['첫 줄을 더 짧고 또렷하게 바꿨습니다.']);
+const T_EMPTY=[...L_WELCOME,['',''],['  /help 로 도움말, 아래 칸에 할 일을 적으세요','#9CA3AF']];
+function busyLine(t){const sp='✶✷✸✹✺✻'[Math.floor(t*8)%6];return[sp+' 일하는 중… ('+Math.max(1,Math.floor(t*3))+'s · esc to interrupt)','#C084FC'];}
+function ptPane(c,g,p,st,i){
+  const {x,y,w,h}=g,stt=p.status||'idle';
+  c.save();
+  c.fillStyle=C.pane;RR(c,x,y,w,h,10);c.fill();
+  if(stt==='busy'){c.save();c.shadowColor='rgba(59,130,246,.7)';c.shadowBlur=16;c.strokeStyle=C.blue;c.lineWidth=3;RR(c,x,y,w,h,10);c.stroke();c.restore();}
+  else if(stt==='done'){c.strokeStyle=C.green;c.lineWidth=3;RR(c,x,y,w,h,10);c.stroke();}
+  else{c.strokeStyle=p.focus?'#8B5CF6':C.line;c.lineWidth=p.focus?2.5:1.5;RR(c,x,y,w,h,10);c.stroke();}
+  // 머리
+  c.fillStyle=gradD(c,x+12,y+10,22,22,'#A855F7','#EC4899');RR(c,x+12,y+10,22,22,5);c.fill();T(c,String(p.n||i+1),x+23,y+21.5,{s:13,w:800,c:'#fff',a:'center'});
+  if(stt==='done'){c.fillStyle='#16A34A';RR(c,x+11,y+34,24,13,3);c.fill();T(c,'완료',x+23,y+41,{s:8,w:700,c:'#fff',a:'center'});}
+  if(stt==='busy'){c.fillStyle='#2563EB';RR(c,x+8,y+34,30,13,3);c.fill();T(c,'작업중',x+23,y+41,{s:8,w:700,c:'#fff',a:'center'});}
+  T(c,p.title||'',x+42,y+19,{s:15,w:800,c:C.ink});
+  T(c,(p.path||'')+'   🧠 '+(p.mem||'196MB'),x+42,y+36,{s:10.5,c:C.dim});
+  btn(c,x+w-34,y+9,26,24,'✕',{bg:'#374151',c:'#F87171',s:13});
+  c.fillStyle=p.agent==='GPT'?'#10A37F':C.vio;RR(c,x+50,y+52,50,17,4);c.fill();T(c,p.agent||'Claude',x+75,y+61,{s:10.5,w:800,c:'#fff',a:'center'});
+  const sel=(sx,sw,l,hot)=>{c.fillStyle='#1F2937';RR(c,sx,y+50,sw,22,5);c.fill();c.strokeStyle=hot?'#A78BFA':'#4B5563';c.lineWidth=hot?2:1;RR(c,sx,y+50,sw,22,5);c.stroke();T(c,l,sx+9,y+61.5,{s:11.5,c:'#E5E7EB'});T(c,'▾',sx+sw-12,y+61,{s:10,c:'#D1D5DB',a:'center'});};
+  if(w>300){sel(x+110,116,p.model||'자동',p.modelHot);sel(x+234,Math.min(102,w-280),'advisor 선택');}
+  const gb=p.globe;c.fillStyle=gb==='n'?'#0E7490':gb==='i'?'#4C1D95':'#1F2937';RR(c,x+w-36,y+50,30,22,5);c.fill();c.strokeStyle=gb==='n'?'#22D3EE':gb==='i'?'#A78BFA':'#4B5563';c.lineWidth=1;RR(c,x+w-36,y+50,30,22,5);c.stroke();
+  c.save();c.globalAlpha=gb?1:.5;T(c,gb==='i'?'🕶':'🌐',x+w-21,y+61.5,{s:12,a:'center'});c.restore();
+  if(p.globeHot){c.strokeStyle='#fff';c.lineWidth=2;RR(c,x+w-36,y+50,30,22,5);c.stroke();}
+  // 터미널
+  const tr0=wr(x+6,y+82,w-12,h-82-176);c.fillStyle=C.term;c.fillRect(tr0.x,tr0.y,tr0.w,tr0.h);
+  c.save();c.beginPath();c.rect(tr0.x,tr0.y,tr0.w,tr0.h);c.clip();
+  const lines=(p.lines||T_EMPTY).concat(p.busy?[['',''],busyLine(p.busy)]:[]),lh=w>500?19:16.5,fs=w>500?15:13;
+  const maxL=Math.floor((tr0.h-24)/lh),start=Math.max(0,lines.length-maxL);
+  lines.slice(start).forEach((L,k)=>{const ly=tr0.y+16+k*lh;if(L[3]){c.fillStyle=L[3];c.fillRect(tr0.x+4,ly-lh/2+1,tr0.w-8,lh-1);}TM(c,L[0],tr0.x+10,ly,{s:fs,c:L[1]||'#E5E7EB',w:L[2]?700:400});});
+  if(p.prompt!==false){const py=tr0.y+tr0.h-48;c.strokeStyle='#4B5563';c.lineWidth=1;c.beginPath();c.moveTo(tr0.x+8,py-12);c.lineTo(tr0.x+tr0.w-30,py-12);c.moveTo(tr0.x+8,py+12);c.lineTo(tr0.x+tr0.w-30,py+12);c.stroke();
+    TM(c,'> '+(p.tline||''),tr0.x+10,py,{s:fs,c:'#F3F4F6'});TM(c,'⏵⏵ auto mode on',tr0.x+22,py+28,{s:fs-1,c:'#A78BFA'});TM(c,'(shift+tab to cycle)',tr0.x+22+fs*9.6,py+28,{s:fs-1,c:'#6B7280'});}
+  c.restore();
+  T(c,'📁 로컬',x+12,y+h-166,{s:10,c:'#6B7280'});
+  // 자주 쓰는 말
+  chipRects(g).forEach((r,k)=>{if(r.x+r.w>x+w-6)return;const hot=p.chipHot===k?1:0;c.fillStyle=hot?'#4B5563':'#1F2937';RR(c,r.x,r.y,r.w,r.h,12);c.fill();c.strokeStyle=r.l==='+'?'#6B7280':'#4B5563';c.lineWidth=1;if(r.l==='+')c.setLineDash([3,3]);RR(c,r.x,r.y,r.w,r.h,12);c.stroke();c.setLineDash([]);T(c,r.l,r.x+r.w/2,r.y+12.5,{s:11,c:'#E5E7EB',a:'center'});
+    if(hot){c.strokeStyle='#C084FC';c.lineWidth=2;RR(c,r.x,r.y,r.w,r.h,12);c.stroke();}});
+  // 입력칸
+  const ib=wr(x+10,y+h-114,w-96,64);c.fillStyle='#000';RR(c,ib.x,ib.y,ib.w,ib.h,6);c.fill();c.strokeStyle=p.inFocus?'#A78BFA':'#374151';c.lineWidth=p.inFocus?2:1;RR(c,ib.x,ib.y,ib.w,ib.h,6);c.stroke();
+  c.save();c.beginPath();c.rect(ib.x,ib.y,ib.w,ib.h);c.clip();
+  if(p.thumb){c.fillStyle=gradD(c,ib.x+8,ib.y+6,34,24,'#60A5FA','#A78BFA');RR(c,ib.x+8,ib.y+6,34,24,3);c.fill();T(c,'🖼',ib.x+25,ib.y+18,{s:12,a:'center'});}
+  if(p.typed){const tx=p.thumb?ib.x+50:ib.x+10;wrapLines(c,tr(p.typed),ib.w-(tx-ib.x)-10,13,500).slice(0,3).forEach((l,k)=>T(c,l,tx,ib.y+18+k*19,{s:13,c:'#F3F4F6'}));
+    if(p.caret){c.fillStyle='#fff';const lw=Math.min(TW(c,wrapLines(c,tr(p.typed),ib.w-20,13,500).slice(-1)[0]||'',13),ib.w-24);c.fillRect(tx+lw+2,ib.y+10,2,16);}}
+  else if(!p.thumb){T(c,'요청 입력 후 엔터 · "질문~"으로 시작하면 답변',ib.x+10,ib.y+20,{s:12.5,c:'#6B7280'});T(c,'이 메모장에 기록돼요',ib.x+10,ib.y+40,{s:12.5,c:'#6B7280'});}
+  c.restore();
+  T(c,'이전 글: Ctrl+↑',x+w-46,y+h-122,{s:9,c:'#6B7280',a:'center'});
+  btn(c,x+w-80,y+h-104,70,22,'📜 요청내역',{bg:'#1F2937',border:'#4B5563',s:11,w:500,hot:p.histHot});
+  btn(c,x+w-80,y+h-74,32,22,'📎',{bg:'#1F2937',border:'#4B5563',s:12,hot:p.clipHot});
+  btn(c,x+w-42,y+h-74,32,22,'🎤',{bg:p.micOn?'#B91C1C':'#1F2937',border:p.micOn?'#F87171':'#4B5563',s:12,hot:p.micHot});
+  // 전송
+  const sb=wr(x+10,y+h-42,w-20,34);c.fillStyle=gradPT(c,sb.x,sb.y,sb.w,sb.h);RR(c,sb.x,sb.y,sb.w,sb.h,7);c.fill();
+  if(p.sendHot){c.fillStyle=`rgba(255,255,255,${.25*p.sendHot})`;RR(c,sb.x,sb.y,sb.w,sb.h,7);c.fill();}
+  T(c,'전송',sb.x+sb.w/2,sb.y+18,{s:13,w:800,c:'#fff',a:'center'});
+  c.restore();
+}
+/* 칸 안에 뜨는 확인창(실제 PT 의 .pane-confirm) — 칸을 흐리게 덮고 가운데 상자 */
+function paneCover(c,g,a){c.save();c.globalAlpha*=a;c.fillStyle='rgba(8,11,18,.62)';RR(c,g.x,g.y,g.w,g.h,10);c.fill();c.restore();}
+function box(c,x,y,w,h,a,o={}){c.save();c.globalAlpha*=a;c.translate(0,(1-a)*10);shadowed(c,40,14,'rgba(0,0,0,.5)',()=>{c.fillStyle=o.bg||'#1F2430';RR(c,x,y,w,h,12);c.fill();});c.strokeStyle=o.line||'#3B4252';c.lineWidth=1.2;RR(c,x,y,w,h,12);c.stroke();return ()=>c.restore();}
+
+/* 세션 추가 창 */
+const ADD_ROWS=[['쇼핑몰','D:\\work\\shop-web'],['블로그 API','D:\\work\\blog-api'],['모바일 앱','D:\\work\\mobile-app'],['랜딩 페이지','D:\\work\\landing']];
+const ADDW=wr(470,170,660,520);
+const addRowP=i=>[ADDW.x+330,ADDW.y+150+i*62];
+function addDlg(c,a,st){
+  c.save();c.globalAlpha*=a;c.fillStyle='rgba(5,8,14,.55)';c.fillRect(0,0,SW,SH);c.restore();
+  const end=box(c,ADDW.x,ADDW.y,ADDW.w,ADDW.h,a);const X=ADDW.x,Y=ADDW.y;
+  T(c,'＋ 세션 추가',X+28,Y+36,{s:20,w:800,c:'#fff'});T(c,'작업할 폴더를 고르면 그 안에서 AI 가 켜져요',X+28,Y+66,{s:13,c:'#9CA3AF'});
+  T(c,'최근 폴더',X+28,Y+104,{s:12,w:700,c:'#A78BFA'});
+  ADD_ROWS.forEach((r,i)=>{const ry=Y+122+i*62,hot=st.addHot===i;c.fillStyle=hot?'#2E3A50':'#252B38';RR(c,X+24,ry,ADDW.w-48,52,9);c.fill();if(hot){c.strokeStyle='#A78BFA';c.lineWidth=2;RR(c,X+24,ry,ADDW.w-48,52,9);c.stroke();}
+    T(c,'📁',X+46,ry+26,{s:18});T(c,r[0],X+74,ry+18,{s:15,w:700,c:'#F3F4F6'});T(c,r[1],X+74,ry+37,{s:11.5,c:'#9CA3AF'});});
+  btn(c,X+24,Y+ADDW.h-64,200,40,'📂 폴더 찾아보기',{bg:'#374151',s:14});btn(c,X+ADDW.w-144,Y+ADDW.h-64,120,40,'닫기',{bg:'#374151',s:14});
+  end();
+}
+
+/* 🌐 브라우저 고르기 (칸 안 확인창) */
+function brMenu(c,g,a,st){
+  paneCover(c,g,a);const w=Math.min(g.w-40,520),x=g.x+(g.w-w)/2,y=g.y+120,h=560;const end=box(c,x,y,w,h,a);
+  const P=[['이 세션(「'+(st.brSess||'쇼핑몰')+'」)의 AI가 쓸 브라우저를 고르세요.','#F3F4F6',700],['',''],
+    ['🌐 일반창 — PT 전용 크롬 창 하나를 모든 세션이 같이 씁니다.','#E5E7EB'],['로그인·쿠키가 남아서 다음에도 로그인된 채로 일합니다.','#9CA3AF'],['',''],
+    ['🕶 시크릿창 — 이 세션만 쓰는 깨끗한 새 크롬을 띄우고,','#E5E7EB'],['끄면 로그인·쿠키·기록이 모두 지워집니다.','#9CA3AF'],['',''],
+    ['⚠ AI는 클릭·입력을 매번 묻지 않고 합니다.','#FBBF24'],['낯선 사이트 작업은 지켜봐 주세요.','#9CA3AF'],['',''],['세션이 재시작되고 대화는 이어집니다.','#9CA3AF']];
+  P.forEach((q,k)=>{if(q[0])T(c,q[0],x+22,y+34+k*26,{s:13,w:q[2]||500,c:q[1]});});
+  const by=y+h-108;btn(c,x+22,by,70,34,'취소',{bg:'#374151',s:13});btn(c,x+102,by,150,34,'🔑 로그인 보관함',{bg:'#374151',s:13,hot:st.brHot==='vault'?1:0});btn(c,x+262,by,120,34,'📝 규칙 편집',{bg:'#374151',s:13});
+  btn(c,x+w-262,by+46,120,36,'🌐 일반창',{grad:1,s:14,hot:st.brHot==='n'?1:0});btn(c,x+w-134,by+46,112,36,'🕶 시크릿창',{grad:1,s:14,hot:st.brHot==='i'?1:0});
+  end();
+  return{vault:[x+177,by+17],n:[x+w-202,by+64],i:[x+w-78,by+64],nR:wr(x+w-262,by+46,120,36),vaultR:wr(x+102,by,150,34)};
+}
+const brGeo=(g)=>{const w=Math.min(g.w-40,520),x=g.x+(g.w-w)/2,y=g.y+120,h=560,by=y+h-108;return{vault:[x+177,by+17],n:[x+w-202,by+64],i:[x+w-78,by+64],nR:wr(x+w-262,by+46,120,36),vaultR:wr(x+102,by,150,34),box:wr(x,y,w,h)};};
+
+/* 🔑 로그인 보관함 (칸 안 확인창) — 목록 · 추가 칸 · 크롬에서 가져오기 */
+const VROWS=[['naver.com','naver.com · kkm_shop'],['cafe24.com','cafe24.com, eclogin.cafe24.com · myshop01']];
+const vGeo=g=>{const w=Math.min(g.w-40,760),x=g.x+(g.w-w)/2,y=g.y+70;return{x,y,w,h:760};};
+const VF=['이름 (예: 토이팡)','로그인 화면 주소, 여러 개면 쉼표','아이디','비밀번호'];
+function vaultDlg(c,g,a,st){
+  paneCover(c,g,a);const v=vGeo(g),{x,y,w}=v;const end=box(c,x,y,w,v.h,a);
+  T(c,'🔑 AI 가 비밀번호를 보지 않고 쓰는 로그인이에요.',x+22,y+32,{s:14,w:700,c:'#F3F4F6'});
+  T(c,'AI 는 이름만 부르고, PT 가 열린 탭이 저장한 주소인지 확인한 뒤 직접 입력해요.',x+22,y+56,{s:12.5,c:'#9CA3AF'});
+  T(c,'비밀번호는 이 PC 에 암호로 저장되고, 사람에게도 AI 에게도 다시 보여 주지 않아요.',x+22,y+78,{s:12.5,c:'#9CA3AF'});
+  const rows=(st.vRows||VROWS);rows.forEach((r,k)=>{const ry=y+104+k*40;c.strokeStyle='#374151';c.lineWidth=1;RR(c,x+22,ry,w-44,34,8);c.stroke();if(st.vNew===k){c.fillStyle=`rgba(34,197,94,${.18*st.vNewK})`;RR(c,x+22,ry,w-44,34,8);c.fill();}
+    T(c,r[0],x+36,ry+17.5,{s:13,w:800,c:'#F3F4F6'});T(c,r[1],x+40+TW(c,r[0],13,800)+10,ry+17.5,{s:12,c:'#9CA3AF'});btn(c,x+w-150,ry+5,56,24,'수정',{bg:'#374151',s:11});btn(c,x+w-86,ry+5,56,24,'삭제',{bg:'#374151',s:11});});
+  const fy=y+114+rows.length*40;const fw=(w-44-70-18)/4;
+  VF.forEach((ph,k)=>{const fx=x+22+k*(fw+6);c.fillStyle='#0F141C';RR(c,fx,fy,fw,32,7);c.fill();c.strokeStyle=st.vFocus===k?'#A78BFA':'#374151';c.lineWidth=st.vFocus===k?2:1;RR(c,fx,fy,fw,32,7);c.stroke();
+    const val=(st.vForm||[])[k];c.save();c.beginPath();c.rect(fx,fy,fw,32);c.clip();if(val)T(c,k===3?'•'.repeat(val.length):val,fx+9,fy+16.5,{s:12.5,c:'#F3F4F6'});else T(c,ph,fx+9,fy+16.5,{s:11.5,c:'#6B7280'});c.restore();});
+  btn(c,x+w-92,fy,70,32,'저장',{grad:1,s:13,hot:st.vSaveHot});
+  // 가져오기
+  const iy=fy+48;
+  if(st.imp){const ia=st.imp;c.save();c.globalAlpha*=ia.a;c.setLineDash([5,4]);c.strokeStyle='#4B5563';RR(c,x+22,iy,w-44,ia.h||330,9);c.stroke();c.setLineDash([]);
+    T(c,'① 크롬 비밀번호 화면을 열어 「비밀번호 내보내기」로 파일을 받으세요.  ② 받은 파일을 여기서 고르세요.',x+36,iy+22,{s:11.5,c:'#9CA3AF'});
+    btn(c,x+36,iy+38,170,30,'크롬 비밀번호 화면 열기',{bg:'#374151',s:12,hot:ia.openHot});btn(c,x+214,iy+38,124,30,'받은 파일 고르기',{grad:1,s:12,hot:ia.pickHot});
+    if(ia.list){const n=ia.list.length,fresh=ia.list.filter(q=>!q[2]).length;T(c,n+'개 찾음 · 새로 가져올 것 '+fresh+'개',x+36,iy+92,{s:13,w:800,c:'#F3F4F6'});
+      c.fillStyle='#0F141C';RR(c,x+250,iy+78,w-44-250-160,28,7);c.fill();c.strokeStyle='#374151';RR(c,x+250,iy+78,w-44-250-160,28,7);c.stroke();T(c,'찾기',x+262,iy+92.5,{s:11.5,c:'#6B7280'});
+      btn(c,x+w-196,iy+78,150,28,ia.busy||('모두 가져오기 ('+fresh+')'),{grad:1,s:12,hot:ia.allHot});
+      ia.list.slice(0,5).forEach((q,k)=>{const ry=iy+118+k*36;c.strokeStyle='#374151';c.lineWidth=1;RR(c,x+36,ry,w-72,30,7);c.stroke();T(c,q[0],x+48,ry+15.5,{s:12.5,w:800,c:'#F3F4F6'});T(c,q[1],x+56+TW(c,q[0],12.5,800),ry+15.5,{s:12,c:'#9CA3AF'});
+        if(q[2])T(c,q[2]==='ok'?'✓ 가져옴':'이미 있음',x+w-50,ry+15.5,{s:11.5,w:q[2]==='ok'?800:500,c:q[2]==='ok'?'#22C55E':'#9CA3AF',a:'right'});else btn(c,x+w-118,ry+3,68,24,'가져오기',{grad:1,s:11,hot:ia.rowHot===k?1:0});});
+      T(c,'⚠ 받은 파일에는 비밀번호가 그대로 적혀 있어요. 다 가져온 뒤 그 파일을 지우세요.',x+36,iy+(ia.h||330)-16,{s:11,c:'#F59E0B'});}
+    c.restore();}
+  const by=y+v.h-50;btn(c,x+w-250,by,136,32,'⬇ 크롬에서 가져오기',{bg:st.imp?'#4B5563':'#374151',s:12,hot:st.impBtnHot});btn(c,x+w-104,by,82,32,'닫기',{bg:'#374151',s:12});
+  end();
+}
+const vImpBtn=g=>{const v=vGeo(g);return[v.x+v.w-182,v.y+v.h-34];};
+const vFieldP=(g,k,rows)=>{const v=vGeo(g),fw=(v.w-44-70-18)/4,fy=v.y+114+(rows||2)*40;return[v.x+22+k*(fw+6)+fw/2,fy+16];};
+const vSaveP=(g,rows)=>{const v=vGeo(g),fy=v.y+114+(rows||2)*40;return[v.x+v.w-57,fy+16];};
+const vImpP=(g,rows,what,k)=>{const v=vGeo(g),iy=v.y+114+(rows||2)*40+48;if(what==='open')return[v.x+121,iy+53];if(what==='pick')return[v.x+276,iy+53];if(what==='all')return[v.x+v.w-121,iy+92];return[v.x+v.w-84,iy+118+k*36+15];};
+
+/* 도우미 단추 아래 팝오버 */
+const HPW=wr(560,52,380,170);
+function helperPop(c,a,st){const {x,y,w,h}=HPW;const end=box(c,x,y,w,h,a);c.save();c.globalAlpha*=a;c.fillStyle='#1F2430';c.beginPath();c.moveTo(x+w-80,y);c.lineTo(x+w-70,y-9);c.lineTo(x+w-60,y);c.fill();c.restore();
+  T(c,'「쇼핑몰」 세션의 요청을 도우미로 알려드릴까요?',x+18,y+30,{s:13.5,w:800,c:'#F3F4F6'});T(c,'방금 한 작업을 써 보려면 무엇을 해야 하는지, 화면에서',x+18,y+54,{s:11.5,c:'#9CA3AF'});T(c,'하나씩 짚어 줘요.',x+18,y+72,{s:11.5,c:'#9CA3AF'});
+  btn(c,x+18,y+92,w-36,34,'🧭 알려줘',{grad:1,s:14,hot:st.hpGoHot});
+  T(c,'화면에 짚어 주기',x+18,y+148,{s:12,c:'#9CA3AF'});c.fillStyle='#111827';RR(c,x+w-152,y+136,134,24,12);c.fill();c.fillStyle=gradPT(c,x+w-150,y+138,64,20);RR(c,x+w-150,y+138,64,20,10);c.fill();T(c,'켜짐',x+w-118,y+148.5,{s:11,w:800,c:'#fff',a:'center'});T(c,'꺼짐',x+w-52,y+148.5,{s:11,c:'#9CA3AF',a:'center'});
+  end();}
+const HP_GO=[HPW.x+HPW.w/2,HPW.y+109];
+
+/* QR — 안내 창, QR 창 */
+function qrGate(c,a,st){c.save();c.globalAlpha*=a;c.fillStyle='rgba(5,8,14,.6)';c.fillRect(0,0,SW,SH);c.restore();const end=box(c,440,280,720,330,a);
+  T(c,'⚠',800,350,{s:40,a:'center',c:'#FBBF24'});T(c,'이 QR·주소를 아는 사람은 이 컴퓨터에서 명령을 실행할 수 있습니다.',800,410,{s:15,w:800,c:'#FCA5A5',a:'center'});
+  T(c,'믿는 사람에게만 공유하세요.',800,444,{s:13,c:'#E5E7EB',a:'center'});T(c,'PowerTerminal 을 끄면 외부 접속이 바로 끊기고, 다음에 켜면 새 주소가 생겨요.',800,472,{s:12.5,c:'#93C5FD',a:'center'});
+  btn(c,684,520,166,36,'이해했습니다 — QR 보기',{grad:1,s:13,hot:st.qrOkHot});btn(c,858,520,58,36,'닫기',{bg:'#374151',s:13});end();}
+const QR_OK=[767,538];
+function qrCode(c,x,y,sz,seed){const n=25,u=sz/n;c.fillStyle='#fff';c.fillRect(x-u,y-u,sz+2*u,sz+2*u);c.fillStyle='#111';
+  let s=seed||7;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280;};
+  for(let r=0;r<n;r++)for(let q=0;q<n;q++){const fin=(r<7&&q<7)||(r<7&&q>=n-7)||(r>=n-7&&q<7);if(fin){const rr=r<7?r:r-(n-7),qq=q<7?q:q-(n-7);const on=rr===0||rr===6||qq===0||qq===6||(rr>=2&&rr<=4&&qq>=2&&qq<=4);if(on)c.fillRect(x+q*u,y+r*u,u+.5,u+.5);}else if(rnd()>.52)c.fillRect(x+q*u,y+r*u,u+.5,u+.5);}}
+function qrShow(c,a){c.save();c.globalAlpha*=a;c.fillStyle='rgba(5,8,14,.6)';c.fillRect(0,0,SW,SH);c.restore();const end=box(c,440,200,720,520,a);
+  T(c,'📱 폰으로 접속',470,240,{s:18,w:800,c:'#fff'});T(c,'밖에서 (인터넷)',490,290,{s:13,w:700,c:'#C084FC'});T(c,'https://••••-••••.trycloudflare.com',490,318,{s:12,c:'#9CA3AF'});
+  T(c,'같은 와이파이',490,370,{s:13,w:700,c:'#60A5FA'});T(c,'http://192.168.0.12:7777',490,398,{s:12,c:'#9CA3AF'});
+  T(c,'폰 카메라로 QR 을 비추세요',490,460,{s:14,w:700,c:'#E5E7EB'});T(c,'처음 한 번만 접속하면 다음부턴 바로 열려요',490,486,{s:12,c:'#9CA3AF'});
+  qrCode(c,870,260,240,11);btn(c,1010,660,120,36,'닫기',{bg:'#374151',s:13});end();}
+
+/* 알림 한 줄 (화면 아래) */
+function toast(c,a,text){if(a<=0)return;c.save();c.globalAlpha*=a;const w=TW(c,text,13,600)+40;c.fillStyle='#111827';RR(c,800-w/2,934,w,38,8);c.fill();c.strokeStyle='#374151';RR(c,800-w/2,934,w,38,8);c.stroke();T(c,text,800,953,{s:13,w:600,c:'#F3F4F6',a:'center'});c.restore();}
+
+/* 도우미 앱이 띄우는 것 — 반짝이는 고리 + 화살표 + 말풍선 */
+function guideDraw(c,gd,t){
+  if(!gd||gd.a<=0)return;c.save();c.globalAlpha*=gd.a;
+  if(gd.ring){const r=gd.ring,pu=1+.5*(Math.sin(t*6)+1)/2;c.strokeStyle='#E879F9';c.lineWidth=3*pu;RR(c,r.x-6,r.y-6,r.w+12,r.h+12,10);c.stroke();c.strokeStyle='rgba(232,121,249,.35)';c.lineWidth=10*pu;RR(c,r.x-6,r.y-6,r.w+12,r.h+12,10);c.stroke();}
+  const bw=gd.w||330,bh=gd.done?120:132,bx=gd.x,by=gd.y;
+  shadowed(c,26,10,'rgba(0,0,0,.45)',()=>{c.fillStyle='#FFFFFF';RR(c,bx,by,bw,bh,14);c.fill();});c.strokeStyle='#A855F7';c.lineWidth=2.5;RR(c,bx,by,bw,bh,14);c.stroke();
+  T(c,gd.head||'',bx+16,by+24,{s:12.5,w:800,c:'#7C3AED'});
+  wrapLines(c,tr(gd.text||''),bw-32,14,700).slice(0,2).forEach((l,k)=>T(c,l,bx+16,by+52+k*21,{s:14,w:700,c:'#111827'}));
+  if(gd.done){T(c,'✓ 했어요!',bx+16,by+98,{s:14,w:800,c:'#16A34A'});}
+  else{btn(c,bx+16,by+bh-40,92,28,'✓ 했어요',{bg:'#7C3AED',s:12});btn(c,bx+116,by+bh-40,60,28,'닫기',{bg:'#E5E7EB',c:'#374151',s:12});}
+  c.restore();
+}
+
+/* ── 다른 앱 화면 ── */
+function chromeWin(c,r,web,st){
+  const {x,y,w,h}=r;shadowed(c,40,14,'rgba(0,0,0,.45)',()=>{c.fillStyle='#DEE1E6';RR(c,x,y,w,h,10);c.fill();});
+  c.save();RR(c,x,y,w,h,10);c.clip();
+  c.fillStyle='#DEE1E6';c.fillRect(x,y,w,38);let tx=x+10;(web.tabs||[['새 탭',1]]).forEach(tb=>{const tw=Math.min(240,TW(c,tb[0],12,500)+60);if(tb[1]){c.fillStyle='#fff';RR(c,tx,y+6,tw,32,8);c.fill();}
+    if(tb[2]){c.fillStyle=tb[2];RR(c,tx+10,y+14,TW(c,tb[3]||'',10,800)+12,16,4);c.fill();T(c,tb[3]||'',tx+16,y+22.5,{s:10,w:800,c:'#fff'});}
+    T(c,tb[0],tx+(tb[2]?TW(c,tb[3]||'',10,800)+30:14),y+22.5,{s:12,c:'#202124'});tx+=tw+4;});
+  c.fillStyle='#fff';c.fillRect(x,y+38,w,40);c.fillStyle='#F1F3F4';RR(c,x+90,y+44,w-180,28,14);c.fill();T(c,'←  →  ⟳',x+16,y+58,{s:14,c:'#5F6368'});T(c,web.url||'',x+108,y+58.5,{s:13,c:'#202124'});
+  c.save();c.beginPath();c.rect(x,y+78,w,h-78);c.clip();c.translate(x,y+78);(PAGES[web.page]||(()=>{}))(c,w,h-78,web,st);c.restore();
+  if(web.dl){c.save();c.globalAlpha*=web.dl;shadowed(c,20,6,'rgba(0,0,0,.25)',()=>{c.fillStyle='#fff';RR(c,x+w-330,y+82,310,74,10);c.fill();});T(c,'⬇',x+w-306,y+119,{s:22,c:'#1A73E8'});T(c,'PowerTerminal.zip',x+w-276,y+108,{s:13,w:700,c:'#202124'});T(c,'다운로드 완료 · 1.1MB',x+w-276,y+130,{s:11.5,c:'#5F6368'});c.restore();}
+  c.restore();
+}
+const PAGES={
+  pominal(c,w,h,web){c.fillStyle='#fff';c.fillRect(0,0,w,h);T(c,'🚀 PowerTerminal',40,34,{s:17,w:800,c:'#7C3AED'});['기능','사용법 영상','보안','GitHub'].forEach((l,i)=>T(c,l,w-420+i*100,34,{s:13,c:'#4B5563'}));
+    T(c,'Claude Code, PC와 폰에서 한 번에',w/2,150,{s:44,w:800,c:'#111827',a:'center'});T(c,'여러 세션을 나란히 — 무료 오픈소스',w/2,204,{s:18,c:'#6B7280',a:'center'});
+    const bw=300;c.save();shadowed(c,24,8,'rgba(138,56,245,.35)',()=>{c.fillStyle=gradD(c,w/2-bw/2,250,bw,58);RR(c,w/2-bw/2,250,bw,58,29);c.fill();});if(web.dlHot){c.fillStyle='rgba(255,255,255,.25)';RR(c,w/2-bw/2,250,bw,58,29);c.fill();}T(c,'⬇ 내려받기 (Windows · Mac)',w/2,280,{s:18,w:800,c:'#fff',a:'center'});c.restore();
+    c.fillStyle='#111827';RR(c,w/2-360,350,720,330,14);c.fill();for(let i=0;i<4;i++){c.fillStyle='#283543';RR(c,w/2-344+i*174,370,164,290,8);c.fill();c.strokeStyle=i===1?'#22C55E':'#374151';c.lineWidth=2;RR(c,w/2-344+i*174,370,164,290,8);c.stroke();}},
+  shop(c,w,h,web){c.fillStyle='#F8FAFC';c.fillRect(0,0,w,h);c.fillStyle='#0F172A';c.fillRect(0,0,w,56);T(c,'🛍 우리가게 관리자',28,29,{s:16,w:800,c:'#fff'});
+    if(web.dash){T(c,'안녕하세요, 사장님',40,100,{s:22,w:800,c:'#0F172A'});[['오늘 주문','12건'],['새 문의','3건'],['방문자','482명']].forEach((q,i)=>{c.fillStyle='#fff';RR(c,40+i*250,130,230,110,12);c.fill();c.strokeStyle='#E2E8F0';RR(c,40+i*250,130,230,110,12);c.stroke();T(c,q[0],60+i*250,162,{s:14,c:'#64748B'});T(c,q[1],60+i*250,206,{s:30,w:800,c:'#0F172A'});});
+      c.fillStyle='#fff';RR(c,40,270,730,260,12);c.fill();c.strokeStyle='#E2E8F0';RR(c,40,270,730,260,12);c.stroke();T(c,'최근 주문',60,300,{s:15,w:800,c:'#0F172A'});['#1042 · 머그컵 2개 · 결제완료','#1041 · 에코백 · 배송준비','#1040 · 텀블러 · 배송중'].forEach((l,i)=>T(c,l,60,340+i*40,{s:14,c:'#334155'}));return;}
+    const fx=w/2-200;c.fillStyle='#fff';RR(c,fx,90,400,330,14);c.fill();c.strokeStyle='#E2E8F0';RR(c,fx,90,400,330,14);c.stroke();T(c,'관리자 로그인',w/2,130,{s:20,w:800,c:'#0F172A',a:'center'});
+    [['아이디',web.id||''],['비밀번호',web.pw?'•'.repeat(web.pw):'']].forEach((q,i)=>{const fy=165+i*80;T(c,q[0],fx+30,fy,{s:12.5,c:'#64748B'});c.fillStyle='#F8FAFC';RR(c,fx+30,fy+12,340,40,8);c.fill();c.strokeStyle=web.focus===i?'#7C3AED':'#CBD5E1';c.lineWidth=web.focus===i?2:1;RR(c,fx+30,fy+12,340,40,8);c.stroke();T(c,q[1],fx+44,fy+33,{s:15,c:'#0F172A'});});
+    c.fillStyle=web.btnHot?'#6D28D9':'#7C3AED';RR(c,fx+30,350,340,44,8);c.fill();T(c,'로그인',w/2,372,{s:15,w:800,c:'#fff',a:'center'});},
+  pwm(c,w,h,web){c.fillStyle='#fff';c.fillRect(0,0,w,h);c.fillStyle='#F8FAFD';c.fillRect(0,0,230,h);T(c,'🔑 Google 비밀번호 관리자',22,34,{s:14,w:800,c:'#202124'});['비밀번호','보안 진단','설정'].forEach((l,i)=>{if(i===2){c.fillStyle='#D3E3FD';RR(c,10,64+i*44,210,36,18);c.fill();}T(c,l,30,82+i*44,{s:14,c:'#202124'});});
+    T(c,'설정',270,50,{s:22,w:500,c:'#202124'});[['비밀번호 가져오기','다른 앱의 비밀번호를 이 기기로 가져와요','선택'],['비밀번호 내보내기','저장된 비밀번호를 파일로 받아요','파일 다운로드']].forEach((q,i)=>{const ry=90+i*90;c.strokeStyle='#E0E3E7';c.lineWidth=1;c.beginPath();c.moveTo(270,ry+80);c.lineTo(w-40,ry+80);c.stroke();T(c,q[0],270,ry+26,{s:15,c:'#202124'});T(c,q[1],270,ry+50,{s:12.5,c:'#5F6368'});
+      const bw=TW(c,q[2],13,600)+36;c.strokeStyle='#747775';RR(c,w-40-bw,ry+20,bw,34,17);c.stroke();if(i===1&&web.expHot){c.fillStyle='rgba(26,115,232,.12)';RR(c,w-40-bw,ry+20,bw,34,17);c.fill();}T(c,q[2],w-40-bw/2,ry+37,{s:13,w:600,c:'#1A73E8',a:'center'});});},
+};
+/* 바탕화면 · 탐색기 · 검은 시작 창 */
+const EXF=[['📁','helper'],['📁','public'],['📄','README.md'],['📄','server.js'],['📄','package.json'],['⚙','start.bat'],['🍎','start.command']];
+const EXWIN=wr(160,110,720,500),exRow=i=>[EXWIN.x+250,EXWIN.y+110+i*40];
+function deskBg(c){const g=c.createLinearGradient(0,0,SW,SH);g.addColorStop(0,'#1E3A8A');g.addColorStop(1,'#6D28D9');c.fillStyle=g;c.fillRect(0,0,SW,SH);c.fillStyle='rgba(15,23,42,.85)';c.fillRect(0,SH-48,SW,48);T(c,'⊞',30,SH-24,{s:22,c:'#fff'});['📁','🌐','🗒'].forEach((e,i)=>T(c,e,80+i*50,SH-24,{s:20}));}
+function explorer(c,st){const {x,y,w,h}=EXWIN;shadowed(c,40,14,'rgba(0,0,0,.45)',()=>{c.fillStyle='#fff';RR(c,x,y,w,h,8);c.fill();});c.fillStyle='#F3F3F3';RR(c,x,y,w,44,8);c.fill();T(c,'📁 PowerTerminal',x+16,y+22,{s:13,w:600,c:'#111'});T(c,'—  ☐  ✕',x+w-80,y+22,{s:13,c:'#333'});
+  c.fillStyle='#F9F9F9';c.fillRect(x,y+44,180,h-44);['바탕 화면','다운로드','문서','사진'].forEach((l,i)=>T(c,'📁 '+tr(l),x+16,y+76+i*30,{s:12.5,c:'#333'}));T(c,'이름',x+200,y+68,{s:12,c:'#666'});
+  EXF.forEach((f,i)=>{const ry=y+90+i*40,hot=st.exHot===i;if(hot){c.fillStyle='#CCE8FF';c.fillRect(x+190,ry,w-200,38);}T(c,f[0],x+204,ry+19,{s:15});T(c,f[1],x+234,ry+19,{s:14,c:'#111',w:hot?700:400});});}
+const CON_L=['PowerTerminal 을 준비하는 중…','✓ Node.js 확인','✓ 필요한 것 설치 (처음 한 번만, 1~2분)','✓ 서버 켜짐 → http://localhost:7777','브라우저를 여는 중…'];
+function consoleWin(c,k){if(k<=0)return;const x=560,y=300,w=820,h=330;c.save();c.globalAlpha*=Math.min(1,k*4);shadowed(c,40,14,'rgba(0,0,0,.5)',()=>{c.fillStyle='#0C0C0C';RR(c,x,y,w,h,8);c.fill();});c.fillStyle='#1F1F1F';RR(c,x,y,w,34,8);c.fill();T(c,'⚙ start.bat',x+14,y+17,{s:12,c:'#ddd'});
+  CON_L.forEach((l,i)=>{const kk=clamp(k*CON_L.length*1.05-i);if(kk<=0)return;TM(c,'  '+l,x+16,y+70+i*36,{s:16,c:l[0]==='✓'?'#4ADE80':'#E5E7EB'});});c.restore();}
+
+/* 노트모드(책) */
+const BOOK_REQ=['로그인 화면 만들어줘','비밀번호 찾기도 넣어줘','색을 브랜드 색으로'];
+function drawBook(c,st){
+  c.fillStyle='#2B2D33';c.fillRect(0,0,SW,SH);c.fillStyle='#1D1F26';c.fillRect(0,0,210,SH);c.fillStyle='#23252B';c.fillRect(1392,0,208,SH);
+  [['쇼핑몰','#BE185D'],['블로그 API','#475569'],['모바일 앱','#7C3AED'],['랜딩 페이지','#0E7490']].forEach((b,i)=>{const bx=10+(i%2)*100,by=16+Math.floor(i/2)*132;c.fillStyle=b[1];RR(c,bx,by,90,120,6);c.fill();if(i===0){c.strokeStyle='#fff';c.lineWidth=2;RR(c,bx-2,by-2,94,124,7);c.stroke();}T(c,b[0],bx+45,by+60,{s:12,w:800,c:'#fff',a:'center'});});
+  c.fillStyle='#3A3D45';RR(c,648,8,308,30,15);c.fill();T(c,'쇼핑몰',700,23,{s:13,w:800,c:'#fff'});T(c,'D:\\work\\shop-web',760,23,{s:11,c:'#9CA3AF'});
+  [['📖  책 모드',''],['터미널 화면','b'],['☀',''],['🔍 검색',''],['⏭ 맨 끝(최근)으로',''],['가− 글자 작게',''],['가+ 글자 크게',''],['📄 넘김 효과',''],['🔊 넘김 소리: 켬',''],['🎨 노트 스타일',''],['원고로 내보내기','']].forEach((q,i)=>{const by=18+i*46;if(i===0){T(c,q[0],1410,by+14,{s:14,w:800,c:'#fff'});return;}
+    const hot=st.bkHot===i;c.fillStyle=q[1]==='b'?'#3B82F6':'#2B2D33';RR(c,1403,by,187,38,6);c.fill();c.strokeStyle=hot?'#A78BFA':'#3A3D45';c.lineWidth=hot?2:1;RR(c,1403,by,187,38,6);c.stroke();T(c,q[0],q[1]==='b'?1496:1416,by+19.5,{s:12.5,w:600,c:'#E5E7EB',a:q[1]==='b'?'center':'left'});});
+  const pg=st.page||0,tot=st.pages||12;T(c,(pg+1)+' / '+tot+'쪽',300,142,{s:11,c:'#9CA3AF'});
+  // 펼친 두 쪽
+  const L=wr(292,150,508,718),R=wr(803,150,509,718);shadowed(c,30,8,'rgba(0,0,0,.4)',()=>{c.fillStyle='#FDFCF8';c.fillRect(L.x,L.y,L.w+R.w+3,L.h);});
+  c.fillStyle='rgba(0,0,0,.08)';c.fillRect(797,150,10,718);
+  const fill=(r,k,which)=>{const req=BOOK_REQ[k%BOOK_REQ.length];
+    if(which==='q'){c.fillStyle='#EEF2FF';RR(c,r.x+34,r.y+40,r.w-68,96,6);c.fill();c.fillStyle='#4F46E5';c.fillRect(r.x+34,r.y+40,4,96);T(c,'요청 · 10-14 09:'+(30+k),r.x+52,r.y+64,{s:12,c:'#6B7280'});T(c,req,r.x+52,r.y+98,{s:17,w:700,c:'#1F2937'});
+      ['이렇게 만들었습니다.','','· 이메일·비밀번호 칸','· 로그인 단추와 오류 안내','· 비밀번호 찾기 링크','','바뀐 파일: src/pages/Login.tsx'].forEach((l,i)=>T(c,l,r.x+40,r.y+190+i*34,{s:16,c:'#1F2937'}));}
+    else{['## 다음에 할 일','','1. 회원가입 화면','2. 로그인 기억하기','3. 소셜 로그인','','필요하면 말씀해 주세요.'].forEach((l,i)=>T(c,l,r.x+40,r.y+60+i*34,{s:l[0]==='#'?19:16,w:l[0]==='#'?800:400,c:'#1F2937'}));}
+    T(c,String(k*2+(which==='q'?1:2)),which==='q'?r.x+30:r.x+r.w-30,r.y+r.h-16,{s:11,c:'#9CA3AF',a:'center'});};
+  fill(L,pg,'q');fill(R,pg,'a');
+  if(st.flip>0&&st.flip<1){const k=st.flip,fw=R.w*(1-k*2);c.save();if(k<.5){c.fillStyle='#F4F1E8';c.fillRect(R.x,R.y,Math.max(0,fw),R.h);c.fillStyle='rgba(0,0,0,.12)';c.fillRect(R.x+fw-6,R.y,6,R.h);}else{const lw=L.w*((k-.5)*2);c.fillStyle='#F4F1E8';c.fillRect(L.x+L.w-lw,L.y,lw,L.h);}c.restore();}
+  if(st.ask){const r=R;c.fillStyle='#F1F5F9';RR(c,r.x+30,r.y+r.h-82,r.w-150,44,8);c.fill();c.strokeStyle=st.askFocus?'#3B82F6':'#CBD5E1';c.lineWidth=st.askFocus?2:1;RR(c,r.x+30,r.y+r.h-82,r.w-150,44,8);c.stroke();
+    T(c,st.askText||'이 책(세션)에 요청하기 — Enter 로 보내기',r.x+44,r.y+r.h-59,{s:13,c:st.askText?'#111827':'#94A3B8'});c.fillStyle=st.askSendHot?'#2563EB':'#3B82F6';RR(c,r.x+r.w-108,r.y+r.h-84,80,48,10);c.fill();T(c,'보내기',r.x+r.w-68,r.y+r.h-59,{s:14,w:800,c:'#fff',a:'center'});}
+  c.fillStyle='#3B82F6';c.fillRect(292,882,1020*((pg+1)/tot),5);c.fillStyle='#4B5563';c.fillRect(292+1020*((pg+1)/tot),882,1020*(1-(pg+1)/tot),5);
+}
+/* 자동 실행(예약) 화면 */
+const SCH_OPT=['지정 시각에 한 번','일정 간격으로 반복','사용량 초기화 후 이어하기'];
+function drawSched(c,st){
+  c.fillStyle='#0B1120';c.fillRect(0,0,SW,SH);T(c,'⏱ 자동 실행',266,60,{s:30,w:800,c:'#fff'});T(c,'원하는 세션에, 필요한 때 한 번씩.',268,108,{s:15,c:'#CBD5E1'});
+  T(c,'PowerTerminal 과 PC 가 켜져 있어야 합니다. 화면이 꺼져도 작동합니다.',268,158,{s:13,c:'#94A3B8'});
+  c.fillStyle='#111A2E';RR(c,268,200,478,760,14);c.fill();c.strokeStyle='#1E293B';RR(c,268,200,478,760,14);c.stroke();T(c,'예약 만들기',292,238,{s:19,w:800,c:'#fff'});
+  const fld=(y,lab,val,hot,arrow)=>{T(c,lab,292,y,{s:14,c:'#E2E8F0'});c.fillStyle='#0B1120';RR(c,292,y+18,428,44,8);c.fill();c.strokeStyle=hot?'#A78BFA':'#334155';c.lineWidth=hot?2:1;RR(c,292,y+18,428,44,8);c.stroke();T(c,val,306,y+40.5,{s:14,c:'#F1F5F9'});if(arrow)T(c,'⌄',708,y+36,{s:16,c:'#94A3B8',a:'center'});};
+  fld(282,'대상 세션',st.sSess||'쇼핑몰 · Claude',st.sHot==='sess',1);fld(370,'언제 실행할까요?',SCH_OPT[st.sWhen||0],st.sHot==='when',1);
+  fld(458,st.sWhen===2?'초기화 시각 (자동으로 읽어요)':'실행 시각 (현지 시간)',st.sWhen===2?'한도가 풀리는 즉시':'2026-10-15  03:00',st.sHot==='time');
+  T(c,'보낼 요청',292,584,{s:14,c:'#E2E8F0'});c.fillStyle='#0B1120';RR(c,292,602,428,120,8);c.fill();c.strokeStyle=st.sHot==='text'?'#A78BFA':'#334155';c.lineWidth=st.sHot==='text'?2:1;RR(c,292,602,428,120,8);c.stroke();
+  wrapLines(c,tr(st.sText==null?'이전에 요청한 미완료 작업을 이어서 진행해.':st.sText),400,14,500).forEach((l,k)=>T(c,l,306,626+k*24,{s:14,c:'#F1F5F9'}));
+  fld(744,'최대 전송 횟수',st.sMax||'10',0);
+  c.fillStyle=st.sSaveHot?'#6D28D9':'#7C3AED';RR(c,292,880,428,46,8);c.fill();T(c,'예약 저장',506,903,{s:15,w:800,c:'#fff',a:'center'});
+  if(st.sOpen){c.save();c.globalAlpha*=st.sOpen;shadowed(c,20,8,'rgba(0,0,0,.5)',()=>{c.fillStyle='#1E293B';RR(c,292,436,428,132,8);c.fill();});SCH_OPT.forEach((o,k)=>{if(st.sOpt===k){c.fillStyle='#4C1D95';c.fillRect(296,442+k*40,420,38);}T(c,o,310,461+k*40,{s:14,c:'#F1F5F9'});});c.restore();}
+  T(c,'등록된 예약',768,238,{s:19,w:800,c:'#fff'});
+  if(st.sSaved){c.save();c.globalAlpha*=st.sSaved;c.fillStyle='#111A2E';RR(c,768,262,550,150,12);c.fill();c.strokeStyle='#7C3AED';c.lineWidth=2;RR(c,768,262,550,150,12);c.stroke();T(c,'쇼핑몰 · Claude',792,296,{s:16,w:800,c:'#fff'});
+    T(c,SCH_OPT[st.sWhen||0]+(st.sWhen===2?'':' · 2026-10-15 03:00'),792,326,{s:13,c:'#C4B5FD'});T(c,'"'+tr(st.sText||'이전에 요청한 미완료 작업을 이어서 진행해.')+'"',792,356,{s:13,c:'#CBD5E1'});
+    const sx=792,sy=380;c.fillStyle=st.sFired?'#16A34A':'#334155';RR(c,sx,sy,st.sFired?120:96,24,12);c.fill();T(c,st.sFired?'✓ 보냈어요':'기다리는 중',sx+(st.sFired?60:48),sy+12.5,{s:11.5,w:700,c:'#fff',a:'center'});c.restore();}
+  else{c.setLineDash([5,5]);c.strokeStyle='#334155';RR(c,768,262,550,84,12);c.stroke();c.setLineDash([]);T(c,'등록된 예약이 없습니다.',798,304,{s:15,c:'#CBD5E1'});}
+}
+const SCH_P={sess:[506,322],when:[506,410],opt:k=>[506,461+k*40],text:[506,662],save:[506,903]};
+
+/* 폰 — 실제 폰 화면(390 폭)을 보고 옮김 */
+function drawPhoneUI(c,x,y,s,st){
+  c.save();c.translate(x,y);c.scale(s,s);
+  shadowed(c,40,16,'rgba(0,0,0,.55)',()=>{c.fillStyle='#0A0A0A';RR(c,-14,-14,418,872,52);c.fill();});c.save();RR(c,0,0,390,844,40);c.clip();
+  c.fillStyle=C.page;c.fillRect(0,0,390,844);T(c,'9:41',28,22,{s:13,w:700,c:'#fff'});
+  T(c,'🚀',22,58,{s:16});c.font=`800 18px ${FONT}`;c.fillStyle=gradH(c,40,140,'#A855F7','#EC4899');c.textAlign='left';c.fillText('PowerTerminal',40,58);
+  btn(c,312,44,64,30,'+ 세션',{grad:1,s:12});
+  [['쇼핑몰',1],['블로그 API',0],['모바일 앱',0],['랜딩 페이지',0]].forEach((q,i)=>{const bx=10+(i%2)*186,by=90+Math.floor(i/2)*40;const on=(st.phSel||0)===i;c.fillStyle='#334155';RR(c,bx,by,176,32,7);c.fill();if(on){c.strokeStyle='#EC4899';c.lineWidth=2;RR(c,bx,by,176,32,7);c.stroke();}
+    c.fillStyle=gradD(c,bx+8,by+6,20,20,'#A855F7','#EC4899');RR(c,bx+8,by+6,20,20,5);c.fill();T(c,String(i+1),bx+18,by+16.5,{s:11,w:800,c:'#fff',a:'center'});T(c,q[0],bx+36,by+16.5,{s:13,w:700,c:'#fff'});});
+  const py=180;c.strokeStyle='#8B5CF6';c.lineWidth=3;RR(c,6,py,378,650,18);c.stroke();c.fillStyle=C.pane;RR(c,7,py+1,376,648,17);c.fill();
+  const names=['쇼핑몰','블로그 API','모바일 앱','랜딩 페이지'],tl=[T_LOGIN,T_API,T_APP,T_LAND][st.phSel||0];
+  c.fillStyle=gradD(c,20,py+14,24,24,'#A855F7','#EC4899');RR(c,20,py+14,24,24,6);c.fill();T(c,String((st.phSel||0)+1),32,py+26.5,{s:13,w:800,c:'#fff',a:'center'});T(c,names[st.phSel||0],54,py+26,{s:16,w:800,c:'#fff'});
+  c.fillStyle=C.term;c.fillRect(14,py+52,362,390);c.save();c.beginPath();c.rect(14,py+52,362,390);c.clip();tl.slice(-17).forEach((L,k)=>{if(L[3]){c.fillStyle=L[3];c.fillRect(16,py+60+k*22,358,21);}TM(c,L[0],20,py+70+k*22,{s:12.5,c:L[1]||'#E5E7EB',w:L[2]?700:400});});
+  if(st.phBusy)TM(c,busyLine(st.phBusy)[0],20,py+70+17*22-4,{s:12.5,c:'#C084FC'});c.restore();
+  ['진행해','다했어?','했어','너가해'].forEach((l,k)=>{const bx=16+k*76;c.fillStyle='#1F2937';RR(c,bx,py+456,70,28,14);c.fill();c.strokeStyle='#4B5563';RR(c,bx,py+456,70,28,14);c.stroke();T(c,l,bx+35,py+470.5,{s:12,c:'#E5E7EB',a:'center'});});
+  c.fillStyle='#000';RR(c,16,py+496,358,70,8);c.fill();c.strokeStyle=st.phFocus?'#A78BFA':'#374151';c.lineWidth=st.phFocus?2:1;RR(c,16,py+496,358,70,8);c.stroke();
+  T(c,st.phText||'요청 입력 후 엔터',28,py+520,{s:14,c:st.phText?'#fff':'#6B7280'});
+  c.fillStyle=gradPT(c,16,py+580,358,46);RR(c,16,py+580,358,46,9);c.fill();T(c,'전송',195,py+604,{s:15,w:800,c:'#fff',a:'center'});
+  c.restore();c.fillStyle='#0A0A0A';RR(c,145,8,100,26,13);c.fill();c.restore();
+}
+/* ── 앱(장면에 그릴 화면) ── */
+function drawPT(c,st){
+  c.fillStyle=C.page;c.fillRect(0,0,SW,SH);ptHeader(c,st);
+  const ps=st.panes||[],n=ps.length,split=st.split||0;
+  if(!n){T(c,'오른쪽 위 「+ 세션」을 눌러 작업할 폴더를 여세요',800,480,{s:20,w:700,c:'#6B7280',a:'center'});}
+  ps.forEach((p,i)=>{const g=paneGeo(i,n,split);const k=p.in==null?1:p.in;if(k<=0)return;c.save();c.globalAlpha*=k;c.translate(0,(1-k)*30);ptPane(c,g,p,st,i);c.restore();});
+  if(st.br)brMenu(c,paneGeo(st.brPane||0,n,split),st.br,st);
+  if(st.vault)vaultDlg(c,paneGeo(st.vPane||0,n,split),st.vault,st);
+  if(st.web)chromeWin(c,st.webR||wr(split+10,66,SW-split-20,900),st.web,st);
+  if(st.add)addDlg(c,st.add,st);
+  if(st.hp)helperPop(c,st.hp,st);
+  if(st.qrGate)qrGate(c,st.qrGate,st);
+  if(st.qr)qrShow(c,st.qr);
+  if(st.phone)drawPhoneUI(c,st.phone[0],st.phone[1],st.phone[2],st);
+  toast(c,st.toastA||0,st.toast||'');
+  guideDraw(c,st.guide,st.t||0);
+}
+function drawDesk(c,st){deskBg(c);if(st.web)chromeWin(c,st.webR||wr(120,60,1360,820),st.web,st);if(st.ex)explorer(c,st);consoleWin(c,st.con||0);guideDraw(c,st.guide,st.t||0);}
+function drawPhoneApp(c,st){c.fillStyle='#0E1420';c.fillRect(0,0,SW,SH);if(st.pc){c.save();c.globalAlpha*=st.pc;c.translate(40,140);c.scale(.62,.62);drawPT(c,st.pcSt||{panes:[]});c.restore();}drawPhoneUI(c,st.phone?st.phone[0]:1100,st.phone?st.phone[1]:90,st.phone?st.phone[2]:.95,st);}
+const APPS={pt:drawPT,desk:drawDesk,book:drawBook,sched:drawSched,phone:drawPhoneApp};
+/* 인트로에 떠다니는 작은 세션 칸 */
+function miniPane(c,i){const w=150,h=100,col=['#22C55E','#3B82F6','#374151','#22C55E','#3B82F6'][i%5];c.fillStyle='#111827';RR(c,-w/2,-h/2,w,h,10);c.fill();c.strokeStyle=col;c.lineWidth=3;RR(c,-w/2,-h/2,w,h,10);c.stroke();
+  c.fillStyle=gradD(c,-w/2+10,-h/2+9,16,16,'#A855F7','#EC4899');RR(c,-w/2+10,-h/2+9,16,16,4);c.fill();T(c,String(i+1),-w/2+18,-h/2+17.5,{s:10,w:800,c:'#fff',a:'center'});
+  c.fillStyle='#E5E7EB';RR(c,-w/2+32,-h/2+12,56,8,4);c.fill();c.fillStyle='#283543';c.fillRect(-w/2+6,-h/2+30,w-12,44);
+  [[.7,'#86EFAC'],[.5,'#E5E7EB'],[.8,'#9CA3AF']].forEach((q,k)=>{c.fillStyle=q[1];c.fillRect(-w/2+12,-h/2+38+k*12,(w-24)*q[0],5);});
+  c.fillStyle=gradPT(c,-w/2+6,h/2-20,w-12,14);RR(c,-w/2+6,h/2-20,w-12,14,4);c.fill();}
+
+/* 영문판: 숫자·이름이 섞여 만들어지는 글 */
+TR_RULES.unshift(
+  [/^(\d+)개 찾음 · 새로 가져올 것 (\d+)개$/,m=>m[1]+' found · '+m[2]+' new'],
+  [/^모두 가져오기 \((\d+)\)$/,m=>'Import all ('+m[1]+')'],
+  [/^가져오는 중 (\d+)\/(\d+)$/,m=>'Importing '+m[1]+'/'+m[2]],
+  [/^이 세션\(「(.+)」\)의 AI가 쓸 브라우저를 고르세요\.$/,m=>'Choose the browser this session ("'+tr(m[1])+'") uses.'],
+  [/^(\d+) \/ (\d+)쪽$/,m=>m[1]+' / '+m[2]],
+  [/^(.) 일하는 중… \((\d+)s · esc to interrupt\)$/,m=>m[1]+' Working… ('+m[2]+'s · esc to interrupt)'],
+  [/^(\s*>\s|\s*●\s|\s+⎿\s+|\s+)(.*[가-힣].*)$/,m=>{const e=EN[m[2]];return e!=null?m[1]+e:m[1]+m[2];}]
+);
+function shadowed(c,blur,oy,col,fn){c.save();c.shadowColor=col;c.shadowBlur=blur;c.shadowOffsetY=oy;fn();c.restore();}
+const pulse=(p,at,w=.05)=>Math.max(0,1-Math.abs(p-at)/w);
+const typedTo=(txt,p,a,b)=>{txt=tr(txt);return txt.slice(0,Math.floor(segL(p,a,b)*txt.length+.001));};
+const blink=p=>Math.floor(p*40)%2===0?1:0;
+const keysAt=(txt,a,b)=>txt.split('').filter((_,i)=>i%2===0).map((_,i,arr)=>[a+(b-a)*(i+.5)/arr.length,'key']);
+
+/* ───────────────────────── 영상 목록 · 장면 대본 ───────────────────────── */
+const CATS=[
+  {id:'basic',name:'기본편',c:'#A855F7'},
+  {id:'ask',name:'요청편',c:'#3B82F6'},
+  {id:'ai',name:'AI 도구편',c:'#22C55E'},
+];
+const PROJ=[{title:'쇼핑몰',path:'D:\\work\\shop-web',lines:T_LOGIN},{title:'블로그 API',path:'D:\\work\\blog-api',lines:T_API},{title:'모바일 앱',path:'D:\\work\\mobile-app',lines:T_APP},{title:'랜딩 페이지',path:'D:\\work\\landing',lines:T_LAND}];
+const mk=(n,f)=>PROJ.slice(0,n).map((p,i)=>Object.assign({n:i+1},p,f?f(i)||{}:{}));
+const PS=o=>Object.assign({panes:[]},o);
+const FULL=[[0,800,500,1.04],[1,800,500,1.04]];
+const hook=(chip,call,line,punch,tiles,narr,min)=>({id:'hook',kind:'hook',name:'첫 한마디',min:min||8,lead:.5,noCap:1,ev:[[.07,'pop'],[.56,'whoosh'],[.6,'ding']],chip,call,line,punch,punchShort:punch.replace('] ',']|'),tiles,narr});
+const intro=narr=>({id:'intro',kind:'intro',name:'인트로',min:5.5,lead:.9,narr});
+const outro=(a,b,narr)=>({id:'outro',kind:'outro',name:'마무리',min:5.5,lead:.6,narr,lines:[a,b]});
+
+/* 1. 설치하고 첫 세션 */
+const P_DL=[800,60+78+280],P_START=exRow(5);
+const START_SCENES=[
+  hook('처음 쓰는 날','아직도?','터미널 켜고 폴더 찾아 들어가세요?','[더블클릭] 한 번으로 끝내요',['✓','✓'],'아직도 터미널 켜고 폴더 찾아 들어가세요? 더블클릭 한 번으로 끝내요.'),
+  intro('파워터미널 기본편입니다. 설치하고 첫 세션을 여는 방법을 알려 드릴게요.'),
+  {id:'down',name:'내려받기',head:'[pominal.com]에서 내려받기',short:'[pominal.com]에서|내려받기',min:8,
+   narr:'포미널 닷컴에서 내려받기를 누르면 압축 파일 하나가 받아집니다. 받은 파일의 압축을 풀어 주세요.',
+   app:'desk',cam:[[0,800,470,1.04],[.2,800,420,1.25],[1,800,420,1.25]],
+   cur:[[0,1150,760],[.22,...P_DL],[.36,...P_DL],[.55,1300,200],[1,1300,200]],clicks:[.3],ev:[[.34,'pop'],[.5,'ding']],
+   view:p=>({st:PS({web:{tabs:[['PowerTerminal — Claude Code',1]],url:'pominal.com',page:'pominal',dlHot:p>.2&&p<.34?1:0,dl:seg(p,.36,.44)}}),
+     spot:p<.36?{r:wr(800-150,60+78+250,300,58),label:'내려받기',a:seg(p,.08,.14)*(1-seg(p,.3,.36))}:{r:wr(1150,142,310,74),label:'압축 파일 하나',a:seg(p,.5,.56)*(1-seg(p,.92,1))}})},
+  {id:'start',name:'start 더블클릭',head:'[start] 파일을 두 번 누르기',short:'[start] 파일|두 번 누르기',min:10,
+   narr:'압축을 푼 폴더에서 스타트 파일을 두 번 누르세요. 필요한 것은 알아서 설치하고, 브라우저에 파워터미널이 열립니다.',
+   app:'desk',cam:[[0,520,360,1.2],[.4,520,360,1.2],[.6,900,470,1.04],[1,900,470,1.04]],
+   cur:[[0,700,700],[.18,...P_START],[.3,...P_START],[1,1200,760]],clicks:[.24,.27],ev:[[.32,'pop'],[.9,'ding']],
+   view:p=>({st:PS({ex:1,exHot:p>.16?5:-1,con:segL(p,.33,.92)}),spot:p<.32?{r:wr(EXWIN.x+190,EXWIN.y+90+5*40,EXWIN.w-200,38),label:'start.bat (맥은 start.command)',a:seg(p,.06,.12)*(1-seg(p,.26,.32))}:null})},
+  {id:'add',name:'세션 추가',head:'[+ 세션]으로 폴더 열기',short:'[+ 세션]으로|폴더 열기',min:10,
+   narr:'오른쪽 위 세션 단추를 누르고 작업할 폴더를 고르세요. 한 번 연 폴더는 목록에 남아서 다음엔 한 번에 열립니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.15,1300,200,1.6],[.3,1300,200,1.6],[.42,800,420,1.25],[1,800,420,1.25]],
+   cur:[[0,900,600],[.15,...HBP('add')],[.26,...HBP('add')],[.5,...addRowP(0)],[.62,...addRowP(0)],[1,...addRowP(0)]],clicks:[.22,.66],ev:[[.25,'pop'],[.7,'pop']],
+   view:p=>({st:PS({hb:p>.12&&p<.24?'add':null,add:seg(p,.24,.3)*(1-seg(p,.68,.74)),addHot:p>.46&&p<.7?0:-1,panes:p>.72?mk(1,()=>({lines:T_EMPTY,in:seg(p,.72,.84),focus:1})):[]}),
+     spot:p<.26?{r:HBR('add'),label:'+ 세션',a:seg(p,.05,.11)*(1-seg(p,.22,.26))}:p<.68?{r:wr(ADDW.x+24,ADDW.y+122,ADDW.w-48,52),label:'작업할 폴더',a:seg(p,.42,.48)*(1-seg(p,.64,.68))}:null})},
+  {id:'ask',name:'첫 요청',head:'바로 [Claude]가 켜져요',short:'바로|[Claude]가 켜져요',min:11,
+   narr:'폴더를 고르면 그 자리에서 클로드가 켜집니다. 아래 칸에 할 일을 적고 전송을 누르면, 클로드가 그 폴더에서 일을 시작해요.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,560,640,1.4],[.62,560,640,1.4],[.8,560,460,1.3],[1,560,460,1.3]],
+   cur:[[0,800,520],[.2,...PP.input(0,1)],[.26,...PP.input(0,1)],[.5,...PP.send(0,1)],[.6,...PP.send(0,1)],[1,700,620]],clicks:[.24,.56],ev:keysAt('로그인 화면 만들어줘',.28,.48).concat([[.58,'whoosh']]),
+   view:p=>({st:PS({panes:mk(1,()=>({lines:p<.58?T_EMPTY:termWork('로그인 화면 만들어줘',[]).slice(0,7),typed:p<.58?typedTo('로그인 화면 만들어줘',p,.28,.48):'',caret:p>.24&&p<.58?blink(p):0,inFocus:p>.24&&p<.58,
+       sendHot:pulse(p,.56,.03),status:p>.58?'busy':'idle',busy:p>.6?(p-.6)*20:0}))}),
+     spot:p<.5?{r:PP.inputR(0,1),label:'할 일 적기',a:seg(p,.1,.16)*(1-seg(p,.46,.5))}:p<.62?{r:PP.sendR(0,1),label:'전송',a:seg(p,.5,.53)*(1-seg(p,.6,.63))}:{r:PP.term(0,1),label:'파란 테두리 = 일하는 중',a:seg(p,.7,.76)}})},
+  outro('설치부터 첫 요청까지,','[1분이면 끝.]','설치부터 첫 요청까지, 일 분이면 끝. 파워터미널이었습니다.'),
+];
+
+/* 2. 여러 세션 나란히 */
+const GRID_SCENES=[
+  hook('프로젝트가 여러 개라면','잠깐!','창 네 개 왔다 갔다 하세요?','[한 화면]에서 다 보세요',['완료','작업중'],'잠깐! 창 네 개 왔다 갔다 하세요? 한 화면에서 다 보세요.'),
+  intro('파워터미널 기본편입니다. 여러 세션을 나란히 두고 쓰는 방법을 알려 드릴게요.'),
+  {id:'more',name:'세션 더하기',head:'열수록 [바둑판]으로 나뉘어요',short:'열수록|[바둑판]으로',min:9,
+   narr:'세션을 하나 더 열 때마다 화면이 알아서 나뉩니다. 프로젝트마다 클로드가 따로 일해요.',
+   app:'pt',cam:FULL,cur:[[0,1300,300],[.1,...HBP('add')],[.16,...HBP('add')],[.36,...HBP('add')],[.42,...HBP('add')],[.62,...HBP('add')],[.68,...HBP('add')],[1,1300,400]],clicks:[.14,.4,.66],ev:[[.18,'pop'],[.44,'pop'],[.7,'pop']],
+   view:p=>{const n=p<.18?1:p<.44?2:p<.7?3:4;return{st:PS({hb:[.14,.4,.66].some(t=>Math.abs(p-t)<.04)?'add':null,panes:mk(n,i=>({in:i===n-1?seg(p,[0,.18,.44,.7][i],[0,.18,.44,.7][i]+.1):1}))})};}},
+  {id:'status',name:'상태 보기',head:'[테두리 색]으로 상태 보기',short:'[테두리 색]으로|상태 보기',min:11,
+   narr:'일하는 중인 세션은 파란 테두리, 일을 마친 세션은 초록 테두리가 됩니다. 일이 끝나면 소리로도 알려 줘요.',
+   app:'pt',cam:FULL,ev:[[.62,'ding']],
+   view:p=>({st:PS({panes:mk(4,i=>({status:i===1?(p<.6?'busy':'done'):i===2?'busy':i===0?'done':'idle',busy:(i===1&&p<.6)||i===2?p*30+i:0}))}),
+     spot:p<.5?{r:paneGeo(2,4),label:'파랑 = 일하는 중',a:seg(p,.1,.18)*(1-seg(p,.44,.5))}:{r:paneGeo(1,4),label:'초록 = 다 했어요',a:seg(p,.62,.7)}})},
+  {id:'sound',name:'끝나면 소리',head:'끝나면 [소리로] 알려 줘요',short:'끝나면|[소리로] 알려 줘요',min:8,
+   narr:'위쪽 스피커 단추를 켜 두면, 일이 끝난 세션 번호를 소리로 불러 줍니다. 다른 일을 하다가도 바로 알 수 있어요.',
+   app:'pt',cam:[[0,800,500,1.04],[.15,900,120,1.9],[.6,900,120,1.9],[.8,800,500,1.04],[1,800,500,1.04]],cur:[[0,800,400],[.18,...HBP('sound')],[.3,...HBP('sound')],[1,...HBP('sound')]],clicks:[.26],ev:[[.28,'tick'],[.72,'ding']],
+   view:p=>({st:PS({hb:p>.16&&p<.3?'sound':null,panes:mk(4,i=>({status:i===3?(p<.7?'busy':'done'):i===0||i===1?'done':'idle',busy:i===3&&p<.7?p*30:0}))}),spot:{r:HBR('sound'),label:'🔊 다 하면 알려 줌',a:seg(p,.1,.16)*(1-seg(p,.6,.66))}})},
+  {id:'model',name:'모델 고르기',head:'세션마다 [모델] 따로',short:'세션마다|[모델] 따로',min:8,
+   narr:'세션 위 칸에서 쓸 모델을 세션마다 따로 고를 수 있어요. 클로드와 GPT도 세션마다 정합니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,420,120,2.2],[1,420,120,2.2]],cur:[[0,500,400],[.24,...PP.model(1,4)],[1,...PP.model(1,4)]],clicks:[.3],
+   view:p=>({st:PS({panes:mk(4,i=>({model:i===1?(p<.5?'자동':'Opus 5.5'):i===2?'Sonnet 5.5':'자동',modelHot:i===1&&p>.26&&p<.6,agent:i===3?'GPT':'Claude'}))}),spot:{r:PP.modelR(1,4),label:'모델 고르기',a:seg(p,.3,.36)}})},
+  outro('프로젝트 네 개도,','[한 화면에서.]','프로젝트 네 개도 한 화면에서. 파워터미널이었습니다.'),
+];
+
+/* 3. 폰으로 이어서 */
+const PHONE_SCENES=[
+  hook('퇴근길 지하철에서','어?','작업 잘 되고 있나 궁금하다면','[폰으로] 바로 확인하세요',['✓','⏳'],'퇴근길에 작업 잘 되고 있나 궁금하다면? 폰으로 바로 확인하세요.'),
+  intro('파워터미널 기본편입니다. 폰으로 이어서 쓰는 방법을 알려 드릴게요.'),
+  {id:'qr',name:'QR 단추',head:'위쪽 [QR 단추]',short:'위쪽|[QR 단추]',min:9,
+   narr:'위쪽 큐알 단추를 누르세요. 주의할 점을 읽고, 이해했습니다 큐알 보기를 누르면 됩니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.12,1000,120,2],[.3,1000,120,2],[.42,800,440,1.3],[1,800,440,1.3]],cur:[[0,800,400],[.14,...HBP('qr')],[.26,...HBP('qr')],[.62,...QR_OK],[.74,...QR_OK],[1,...QR_OK]],clicks:[.22,.7],ev:[[.25,'pop'],[.74,'pop']],
+   view:p=>({st:PS({hb:p>.12&&p<.24?'qr':null,panes:mk(4),qrGate:seg(p,.25,.32)*(1-seg(p,.7,.74)),qrOkHot:p>.6&&p<.72?1:0,qr:seg(p,.74,.8)}),
+     spot:p<.26?{r:HBR('qr'),label:'QR',a:seg(p,.04,.1)*(1-seg(p,.22,.26))}:p<.72?{r:wr(470,390,660,100),label:'믿는 사람에게만',a:seg(p,.36,.42)*(1-seg(p,.58,.62))}:null})},
+  {id:'scan',name:'폰으로 찍기',head:'폰 카메라로 [찍기]',short:'폰 카메라로|[찍기]',min:8,
+   narr:'폰 카메라로 큐알을 비추면 주소가 열리고, 바로 피시와 같은 화면이 나옵니다.',
+   app:'pt',cam:[[0,800,440,1.3],[1,880,460,1.2]],ev:[[.5,'ding']],
+   view:p=>({st:PS({panes:mk(4),qr:1,phone:[lerp(1700,1150,eOut(segL(p,.05,.4))),lerp(260,150,eOut(segL(p,.05,.4))),.8]}),spot:{r:wr(862,252,256,256),label:'카메라로 비추기',a:seg(p,.3,.38)*(1-seg(p,.9,1))}})},
+  {id:'same',name:'같은 화면',head:'PC와 [같은 세션]',short:'PC와|[같은 세션]',min:11,
+   narr:'폰에서도 피시와 같은 세션이 보입니다. 위쪽 이름을 눌러 세션을 오가고, 아래 칸에 바로 요청하세요.',
+   app:'phone',cam:[[0,800,500,1.04],[1,800,500,1.04]],cur:[[0,1400,700],[.2,1100+186*.95+90*.95,90+106*.95],[.3,1100+186*.95+90*.95,90+106*.95],[.55,1100+195*.95,90+(180+530)*.95],[1,1100+195*.95,90+(180+530)*.95]],clicks:[.26,.58],ev:keysAt('결제 화면도 만들어줘',.62,.86),
+   view:p=>({st:PS({pc:1,pcSt:{panes:mk(4,i=>({status:i===1&&p>.3?'busy':i===0?'done':'idle',busy:i===1?p*20:0}))},phSel:p<.26?0:1,phFocus:p>.58,phText:p>.6?typedTo('결제 화면도 만들어줘',p,.62,.86):'',phBusy:0}),
+     spot:p<.5?{r:wr(1100+186*.95,90+90*.95,176*.95,32*.95),label:'다른 세션으로',a:seg(p,.12,.18)*(1-seg(p,.44,.5))}:null})},
+  {id:'end',name:'끄면 끝',head:'PT를 끄면 [주소도 끝]',short:'PT를 끄면|[주소도 끝]',min:8,
+   narr:'피시에서 파워터미널을 끄면 밖에서 들어오던 주소도 바로 끊기고, 다음에 켜면 새 주소가 생겨요.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,1393,120,2],[1,1393,120,2]],cur:[[0,1000,400],[.3,...HBP('quit')],[1,...HBP('quit')]],
+   view:p=>({st:PS({hb:p>.3?'quit':null,panes:mk(4)}),spot:{r:HBR('quit'),label:'끄면 외부 주소도 폐기',a:seg(p,.3,.36)}})},
+  outro('어디서든,','[내 PC 그대로.]','어디서든 내 피시 그대로. 파워터미널이었습니다.'),
+];
+
+/* 4. 요청창 잘 쓰기 */
+const INPUT_SCENES=[
+  hook('매번 같은 말','또?','"진행해" "다 했어?" 매번 치세요?','[단추 한 번]이면 돼요',['진행해','다했어?'],'진행해, 다 했어? 매번 치세요? 단추 한 번이면 돼요.'),
+  intro('파워터미널 요청편입니다. 요청창을 빠르게 쓰는 방법을 알려 드릴게요.'),
+  {id:'chips',name:'자주 쓰는 말',head:'[자주 쓰는 말]은 단추로',short:'[자주 쓰는 말]은|단추로',min:9,
+   narr:'입력칸 위 단추를 누르면 그 말이 바로 보내집니다. 더하기를 눌러 내가 자주 쓰는 말을 더할 수 있어요.',
+   app:'pt',cam:[[0,800,500,1.04],[.15,530,830,2.2],[1,530,830,2.2]],cur:[[0,700,600],[.2,...PP.chip(0,2,0)],[.3,...PP.chip(0,2,0)],[.6,...PP.chip(0,2,7)],[1,...PP.chip(0,2,7)]],clicks:[.28],ev:[[.32,'whoosh']],
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{chipHot:p>.2&&p<.34?0:p>.6?7:-1,lines:p<.3?T_LOGIN:T_LOGIN.concat([['',''],reqLine('진행해')]),status:p>.32?'busy':'idle',busy:p>.32?p*20:0}:{})}),
+     spot:p<.55?{r:PP.chipsR(0,2),label:'누르면 바로 전송',a:seg(p,.06,.12)*(1-seg(p,.5,.55))}:{r:wr(PP.chip(0,2,7)[0]-12,PP.chip(0,2,7)[1]-12,24,24),label:'내 말 더하기',a:seg(p,.6,.66)}})},
+  {id:'img',name:'그림 붙여넣기',head:'그림은 [붙여넣기] 한 번',short:'그림은|[붙여넣기] 한 번',min:10,
+   narr:'캡처한 화면을 입력칸에 붙여 넣으면 그림으로 첨부됩니다. 클로드가 그 그림을 보고 일해요.',
+   app:'pt',cam:[[0,530,830,2.2],[1,530,830,2.2]],cur:[[0,...PP.chip(0,2,7)],[.18,...PP.input(0,2)],[1,...PP.input(0,2)]],clicks:[.24],ev:[[.34,'pop']].concat(keysAt('이 화면처럼 바꿔줘',.42,.7)),
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{inFocus:p>.24,thumb:p>.34,typed:p>.4?typedTo('이 화면처럼 바꿔줘',p,.42,.7):'',caret:p>.24?blink(p):0}:{})}),
+     spot:{r:PP.inputR(0,2),label:'Ctrl + V',a:seg(p,.26,.32)*(1-seg(p,.9,1))}})},
+  {id:'mic',name:'말로 요청',head:'[말로] 요청하기',short:'[말로]|요청하기',min:9,
+   narr:'마이크 단추를 누르고 말하면 글로 바뀌어 입력칸에 들어갑니다. 확인하고 전송을 누르세요.',
+   app:'pt',cam:[[0,530,830,2.2],[1,530,830,2.2]],cur:[[0,...PP.input(0,2)],[.16,...PP.mic(0,2)],[.24,...PP.mic(0,2)],[.8,...PP.send(0,2)],[1,...PP.send(0,2)]],clicks:[.22,.86],ev:[[.24,'tick'],[.88,'whoosh']],
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{micOn:p>.22&&p<.72,typed:p>.3?typedTo('결제 화면도 같은 색으로 맞춰줘',p,.32,.7):'',sendHot:pulse(p,.86,.03)}:{})}),
+     spot:p<.75?{r:wr(PP.mic(0,2)[0]-16,PP.mic(0,2)[1]-11,32,22),label:'🎤 말하면 글로',a:seg(p,.12,.18)*(1-seg(p,.7,.75))}:null})},
+  {id:'q',name:'질문은 메모장에',head:'[질문~]은 메모장에 남아요',short:'[질문~]은|메모장에 남아요',min:9,
+   narr:'질문으로 시작해서 보내면, 답변이 그 폴더의 메모장에 따로 기록됩니다. 나중에 다시 찾아보기 좋아요.',
+   app:'pt',cam:[[0,530,830,2.2],[.5,560,640,1.6],[1,560,640,1.6]],cur:[[0,...PP.send(0,2)],[.2,...PP.input(0,2)],[1,...PP.input(0,2)]],ev:keysAt('질문 로그인 기억하기는 어떻게 해?',.24,.5),
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{typed:p<.56?typedTo('질문 로그인 기억하기는 어떻게 해?',p,.24,.5):'',caret:p<.56?blink(p):0,inFocus:p<.56,lines:p<.56?T_LOGIN:T_LOGIN.concat([['',''],reqLine('질문 로그인 기억하기는 어떻게 해?'),['',''],['● 로그인 유지 체크칸을 두고 토큰을 저장하면 돼요.','#F3F4F6']])}:{}),toast:'📝 답변을 메모장에 기록했어요',toastA:seg(p,.62,.68)}),
+     spot:{r:PP.inputR(0,2),label:'"질문"으로 시작',a:seg(p,.1,.16)*(1-seg(p,.5,.56))}})},
+  {id:'hist',name:'요청내역',head:'[요청내역]으로 다시 보기',short:'[요청내역]으로|다시 보기',min:8,
+   narr:'요청내역을 누르면 지금까지 보낸 요청이 모두 나옵니다. 컨트롤과 위 화살표로 이전 글을 다시 불러올 수도 있어요.',
+   app:'pt',cam:[[0,560,640,1.6],[.2,600,840,2.4],[1,600,840,2.4]],cur:[[0,...PP.input(0,2)],[.2,...PP.hist(0,2)],[1,...PP.hist(0,2)]],
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{histHot:p>.2?1:0}:{})}),spot:p<.6?{r:wr(PP.hist(0,2)[0]-35,PP.hist(0,2)[1]-11,70,22),label:'보낸 요청 모두',a:seg(p,.22,.28)*(1-seg(p,.55,.6))}:{r:wr(paneGeo(0,2).x+paneGeo(0,2).w-84,paneGeo(0,2).y+900-128,76,12),label:'Ctrl + ↑ 이전 글',a:seg(p,.62,.68)}})},
+  outro('요청은 짧게,','[일은 AI가.]','요청은 짧게, 일은 AI가. 파워터미널이었습니다.'),
+];
+
+/* 5. 노트모드 */
+const BOOK_SCENES=[
+  hook('스크롤 끝없는 대화','휴…','어디까지 읽었는지 또 잃어버렸나요?','[책처럼] 넘겨 보세요',['1쪽','2쪽'],'휴, 어디까지 읽었는지 또 잃어버렸나요? 책처럼 넘겨 보세요.'),
+  intro('파워터미널 요청편입니다. 긴 대화를 책처럼 읽는 노트모드를 알려 드릴게요.'),
+  {id:'open',name:'책 단추',head:'위쪽 [책 단추]',short:'위쪽|[책 단추]',min:7,
+   narr:'위쪽 책 단추를 누르면 마지막으로 쓴 세션의 대화가 책으로 열립니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,1110,120,2.2],[1,1110,120,2.2]],cur:[[0,800,400],[.24,...HBP('book')],[1,...HBP('book')]],clicks:[.4],ev:[[.44,'pop']],
+   view:p=>({st:PS({hb:p>.22?'book':null,panes:mk(4)}),spot:{r:HBR('book'),label:'📖 노트모드',a:seg(p,.24,.3)}})},
+  {id:'flip',name:'넘겨 읽기',head:'요청과 답이 [한 쪽씩]',short:'요청과 답이|[한 쪽씩]',min:10,
+   narr:'요청과 답변이 쪽으로 나뉘어 있어요. 화살표나 휠로 넘기고, 보던 쪽은 다음에 열어도 그대로입니다.',
+   app:'book',cam:FULL,ev:[[.3,'whoosh'],[.62,'whoosh']],
+   view:p=>({st:{page:p<.36?0:p<.68?1:2,flip:p>.24&&p<.36?(p-.24)/.12:p>.56&&p<.68?(p-.56)/.12:0,pages:12},spot:p>.74?{r:wr(292,880,1020,9),label:'보던 쪽 기억',a:seg(p,.74,.8)}:null})},
+  {id:'ask',name:'바로 요청',head:'읽다가 [바로 요청]',short:'읽다가|[바로 요청]',min:10,
+   narr:'마지막 쪽 아래 칸에 쓰면 그 세션에 바로 요청이 갑니다. 그림도 붙여 넣을 수 있어요.',
+   app:'book',cam:[[0,800,500,1.04],[.2,1060,780,1.8],[1,1060,780,1.8]],cur:[[0,900,500],[.2,1000,798],[.3,1000,798],[.74,1244,793],[1,1244,793]],clicks:[.26,.78],ev:keysAt('버튼 색을 조금 더 밝게',.32,.66).concat([[.8,'whoosh']]),
+   view:p=>({st:{page:11,pages:12,ask:1,askFocus:p>.26,askText:typedTo('버튼 색을 조금 더 밝게',p,.32,.66),askSendHot:p>.72&&p<.84},spot:{r:wr(833,786,479,48),label:'여기에 쓰면 그 세션으로',a:seg(p,.1,.16)*(1-seg(p,.9,1))}})},
+  {id:'tools',name:'오른쪽 도구',head:'[검색] · [글자 크기] · [내보내기]',short:'[검색] · [글자 크기]|[내보내기]',min:9,
+   narr:'오른쪽에서 대화를 검색하고, 글자 크기를 바꾸고, 원고 파일로 내보낼 수도 있어요.',
+   app:'book',cam:[[0,800,500,1.04],[.15,1430,300,1.6],[1,1430,300,1.6]],cur:[[0,1300,400],[.2,1496,156],[.36,1496,156],[.5,1496,294],[.62,1496,294],[.78,1496,478],[1,1496,478]],
+   view:p=>({st:{page:3,pages:12,bkHot:p<.4?3:p<.66?6:10},spot:{r:p<.4?wr(1403,156,187,38):p<.66?wr(1403,294,187,38):wr(1403,478,187,38),label:p<.4?'대화 검색':p<.66?'글자 크게':'원고로 내보내기',a:seg(p,.2,.26)}})},
+  outro('긴 대화도,','[한 쪽씩 편하게.]','긴 대화도 한 쪽씩 편하게. 파워터미널이었습니다.'),
+];
+
+/* 6. 자동 실행 */
+const AUTO_SCENES=[
+  hook('새벽 세 시','알람?','사용량 한도 풀리길 기다리며 깨어 있나요?','[자동 실행]에 맡기세요',['예약','보냄'],'사용량 한도 풀리길 기다리며 깨어 있나요? 자동 실행에 맡기세요.'),
+  intro('파워터미널 요청편입니다. 정한 때에 요청을 자동으로 보내는 방법을 알려 드릴게요.'),
+  {id:'open',name:'자동 실행 단추',head:'위쪽 [⏱ 자동 실행]',short:'위쪽|[⏱ 자동 실행]',min:7,
+   narr:'위쪽 자동 실행을 누르면 예약 화면이 새 창으로 열립니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,1420,120,2],[1,1420,120,2]],cur:[[0,800,400],[.24,...HBP('auto')],[1,...HBP('auto')]],clicks:[.42],ev:[[.46,'pop']],
+   view:p=>({st:PS({hb:p>.22?'auto':null,panes:mk(4)}),spot:{r:HBR('auto'),label:'⏱ 자동 실행',a:seg(p,.24,.3)}})},
+  {id:'when',name:'세션과 때',head:'[세션]과 [때] 고르기',short:'[세션]과|[때] 고르기',min:12,
+   narr:'요청을 보낼 세션을 고르고, 언제 보낼지 고르세요. 지정 시각에 한 번, 일정 간격으로 반복, 또는 사용량이 초기화되면 이어하기가 있어요.',
+   app:'sched',cam:[[0,800,500,1.04],[.15,520,440,1.5],[1,520,440,1.5]],cur:[[0,900,300],[.14,...SCH_P.sess],[.24,...SCH_P.sess],[.34,...SCH_P.when],[.42,...SCH_P.when],[.62,...SCH_P.opt(2)],[.74,...SCH_P.opt(2)],[1,...SCH_P.opt(2)]],clicks:[.2,.4,.72],ev:[[.42,'pop'],[.74,'tick']],
+   view:p=>({st:{sHot:p<.3?'sess':'when',sOpen:p>.4&&p<.74?seg(p,.4,.46):0,sOpt:p<.5?0:p<.58?1:2,sWhen:p>.74?2:0},spot:p<.3?{r:wr(292,300,428,44),label:'보낼 세션',a:seg(p,.06,.12)*(1-seg(p,.26,.3))}:p<.74?{r:wr(292,436,428,132),label:'언제 보낼까',a:seg(p,.46,.52)*(1-seg(p,.7,.74))}:null})},
+  {id:'text',name:'요청 적기',head:'보낼 [요청] 적고 저장',short:'보낼 [요청]|적고 저장',min:10,
+   narr:'보낼 요청을 적고 최대 몇 번까지 보낼지 정한 뒤 예약 저장을 누르세요.',
+   app:'sched',cam:[[0,520,600,1.4],[1,800,560,1.1]],cur:[[0,...SCH_P.text],[.12,...SCH_P.text],[.6,...SCH_P.save],[.7,...SCH_P.save],[1,900,400]],clicks:[.14,.68],ev:keysAt('어제 하던 쇼핑몰 작업 이어서 끝내줘',.16,.5).concat([[.7,'ding']]),
+   view:p=>({st:{sWhen:2,sHot:p<.6?'text':null,sText:typedTo('어제 하던 쇼핑몰 작업 이어서 끝내줘',p,.16,.5),sSaveHot:p>.62&&p<.72,sSaved:seg(p,.7,.78)},spot:p>.72?{r:wr(768,262,550,150),label:'등록됐어요',a:seg(p,.74,.8)}:null})},
+  {id:'run',name:'알아서 보냄',head:'때가 되면 [알아서]',short:'때가 되면|[알아서]',min:10,
+   narr:'때가 되면 세션이 일하는 중인지 보고, 쉬고 있을 때 요청을 보냅니다. 피시와 파워터미널만 켜져 있으면 돼요.',
+   app:'pt',cam:FULL,ev:[[.3,'whoosh'],[.9,'ding']],
+   view:p=>({st:PS({panes:mk(4,i=>i===0?{lines:p<.3?T_LOGIN:T_LOGIN.concat([['',''],reqLine('어제 하던 쇼핑몰 작업 이어서 끝내줘')]),status:p<.3?'idle':p<.88?'busy':'done',busy:p>.3&&p<.88?(p-.3)*30:0}:{}),toast:'⏱ 예약한 요청을 「쇼핑몰」에 보냈어요',toastA:seg(p,.3,.36)*(1-seg(p,.8,.86))}),spot:{r:paneGeo(0,4),label:p<.88?'자는 동안 일하는 중':'다 했어요',a:seg(p,.4,.46)}})},
+  outro('자는 동안에도,','[일은 계속.]','자는 동안에도 일은 계속. 파워터미널이었습니다.'),
+];
+
+/* 7. AI 에게 브라우저 맡기기 */
+const SPL=640;   // 왼쪽에 PT, 오른쪽에 크롬
+const BRW_SCENES=[
+  hook('사이트 확인할 때마다','또 내가?','"페이지 열어서 확인해 주세요"','[AI가 직접] 열어 보게 하세요',['열기','확인'],'페이지 열어서 확인해 주세요? 이제 AI가 직접 열어 보게 하세요.'),
+  intro('파워터미널 AI 도구편입니다. AI가 진짜 크롬으로 일하게 하는 방법을 알려 드릴게요.'),
+  {id:'globe',name:'🌐 단추',head:'세션 위 [🌐 단추]',short:'세션 위|[🌐 단추]',min:8,
+   narr:'세션 위 지구 단추를 누르면, 이 세션의 AI가 쓸 브라우저를 고르는 창이 나옵니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,560,100,2.2],[.5,560,100,2.2],[.7,480,480,1.12],[1,480,480,1.12]],cur:[[0,500,400],[.22,...PP.globe(0,2)],[.36,...PP.globe(0,2)],[1,...PP.globe(0,2)]],clicks:[.34],ev:[[.38,'pop']],
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{globeHot:p>.22&&p<.4}:{}),br:seg(p,.38,.46)}),spot:p<.4?{r:PP.globeR(0,2),label:'🌐',a:seg(p,.1,.16)*(1-seg(p,.34,.4))}:null})},
+  {id:'mode',name:'일반창·시크릿창',head:'[일반창] 또는 [시크릿창]',short:'[일반창] 또는|[시크릿창]',min:12,
+   narr:'일반창은 로그인이 남아서 다음에도 이어서 쓰고, 시크릿창은 끌 때마다 깨끗하게 지워집니다. 여기서는 일반창을 고를게요.',
+   app:'pt',cam:[[0,480,480,1.12],[1,480,480,1.12]],cur:[[0,...PP.globe(0,2)],[.2,...brGeo(paneGeo(0,2)).box.x>0?[brGeo(paneGeo(0,2)).box.x+200,330]:[300,300]],[.5,...brGeo(paneGeo(0,2)).n],[.62,...brGeo(paneGeo(0,2)).n],[1,...brGeo(paneGeo(0,2)).n]],clicks:[.8],ev:[[.84,'ding']],
+   view:p=>({st:PS({panes:mk(2,i=>i===0?{globe:p>.84?'n':0}:{}),br:1-seg(p,.84,.9),brHot:p>.48&&p<.86?'n':null}),
+     spot:p<.3?{r:wr(brGeo(paneGeo(0,2)).box.x+10,paneGeo(0,2).y+150,brGeo(paneGeo(0,2)).box.w-20,150),label:'일반창 · 시크릿창',a:seg(p,.04,.1)*(1-seg(p,.26,.3))}:p<.84?{r:brGeo(paneGeo(0,2)).nR,label:'일반창',a:seg(p,.46,.52)*(1-seg(p,.8,.84))}:{r:PP.globeR(0,2),label:'켜지면 색이 바뀌어요',a:seg(p,.88,.93)}})},
+  {id:'work',name:'AI가 직접',head:'AI가 [직접] 열고 눌러요',short:'AI가 [직접]|열고 눌러요',min:12,
+   narr:'이제 요청하면 AI가 크롬을 열어 페이지를 보고, 누르고, 적고, 결과를 확인합니다.',
+   app:'pt',cam:[[0,800,500,1.04],[1,800,500,1.04]],ev:[[.3,'pop'],[.5,'key'],[.56,'key'],[.66,'key'],[.72,'key'],[.8,'tick'],[.9,'ding']],
+   view:p=>{const w={tabs:[['[쇼핑몰] 관리자 로그인',1,'#7C3AED','쇼핑몰']],url:'myshop.example.com/admin',page:'shop',focus:p<.62?0:1,id:typedTo('myshop01',p,.46,.6),pw:Math.floor(segL(p,.64,.76)*8),btnHot:p>.78&&p<.84,dash:p>.84};
+     return{st:PS({split:SPL,panes:mk(1,()=>({globe:'n',lines:T_EMPTY.concat([['',''],reqLine('관리자 화면에서 오늘 주문 확인해줘'),['',''],['● 브라우저로 관리자 페이지를 엽니다.','#F3F4F6'],['● 로그인 칸을 채웁니다.','#F3F4F6']].slice(0,p<.3?2:p<.6?5:7)),status:p<.9?'busy':'done',busy:p<.9?p*30:0})),web:p>.26?{...w}:null,webR:wr(SPL+10,66,SW-SPL-20,900)}),
+       spot:p>.86?{r:wr(SPL+50,66+78+120,730,120),label:'결과까지 확인',a:seg(p,.86,.92)}:null};}},
+  {id:'tab',name:'탭에 세션 이름',head:'탭에 [세션 이름]',short:'탭에|[세션 이름]',min:9,
+   narr:'여러 세션이 같은 창을 써도, 탭 제목에 세션 이름이 붙어서 누가 연 탭인지 바로 보여요.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,1000,110,2],[1,1000,110,2]],
+   view:p=>({st:PS({split:SPL,panes:mk(1,()=>({globe:'n',lines:T_EMPTY,status:'done'})),web:{tabs:[['[쇼핑몰] 관리자',1,'#7C3AED','쇼핑몰'],['[블로그 API] 문서',0,'#0E7490','블로그 API'],['[랜딩 페이지] 미리보기',0,'#BE185D','랜딩 페이지']],url:'myshop.example.com/admin',page:'shop',dash:1},webR:wr(SPL+10,66,SW-SPL-20,900)}),
+     spot:{r:wr(SPL+16,72,760,32),label:'누가 연 탭인지',a:seg(p,.22,.28)}})},
+  outro('확인은 AI가,','[나는 결과만.]','확인은 AI가, 나는 결과만. 파워터미널이었습니다.'),
+];
+
+/* 8. 로그인 보관함 */
+const VP=paneGeo(0,1);
+const V_FORM=['우리가게','myshop.example.com','myshop01','qwer1234'];
+const VAULT_SCENES=[
+  hook('로그인 화면에서 멈춘 AI','비밀번호?','채팅창에 비밀번호 적어 주시려고요?','[보관함]에 넣어 두세요',['🔒','🔒'],'로그인 화면에서 멈춘 AI에게, 채팅창으로 비밀번호 적어 주시려고요? 보관함에 넣어 두세요.',9),
+  intro('파워터미널 AI 도구편입니다. 비밀번호를 AI에게 보여 주지 않고 로그인시키는 방법을 알려 드릴게요.'),
+  {id:'open',name:'보관함 열기',head:'🌐 → [🔑 로그인 보관함]',short:'🌐 →|[🔑 로그인 보관함]',min:8,
+   narr:'지구 단추를 누르고, 로그인 보관함을 여세요.',
+   app:'pt',cam:[[0,800,500,1.04],[.15,800,560,1.1],[1,800,560,1.1]],cur:[[0,800,400],[.14,...PP.globe(0,1)],[.24,...PP.globe(0,1)],[.5,...brGeo(VP).vault],[.62,...brGeo(VP).vault],[1,...brGeo(VP).vault]],clicks:[.2,.6],ev:[[.24,'pop'],[.64,'pop']],
+   view:p=>({st:PS({panes:mk(1,()=>({globe:'n',globeHot:p>.12&&p<.24})),br:seg(p,.22,.28)*(1-seg(p,.6,.64)),brHot:p>.44&&p<.62?'vault':null,vault:seg(p,.64,.7),vRows:VROWS}),spot:p>.28&&p<.6?{r:brGeo(VP).vaultR,label:'🔑 로그인 보관함',a:seg(p,.34,.4)*(1-seg(p,.56,.6))}:null})},
+  {id:'add',name:'저장하기',head:'이름·주소·아이디·[비밀번호]',short:'이름 · 주소 · 아이디|[비밀번호]',min:12,
+   narr:'이름과 사이트 주소, 아이디, 비밀번호를 적고 저장하세요. 비밀번호는 이 컴퓨터에 암호로 바뀌어 저장되고, 다시 보여 주지 않습니다.',
+   app:'pt',cam:[[0,800,560,1.1],[.1,800,330,1.7],[1,800,330,1.7]],
+   cur:[[0,...vFieldP(VP,0)],[.12,...vFieldP(VP,0)],[.3,...vFieldP(VP,1)],[.48,...vFieldP(VP,2)],[.62,...vFieldP(VP,3)],[.78,...vSaveP(VP)],[1,...vSaveP(VP)]],clicks:[.12,.3,.48,.62,.8],ev:keysAt('우리가게myshop.example.commyshop01qwer1234',.14,.74).concat([[.82,'ding']]),
+   view:p=>{const f=[typedTo(V_FORM[0],p,.14,.26),typedTo(V_FORM[1],p,.32,.46),typedTo(V_FORM[2],p,.5,.6),V_FORM[3].slice(0,Math.floor(segL(p,.64,.74)*8))];const saved=p>.82;
+     return{st:PS({panes:mk(1,()=>({globe:'n'})),vault:1,vRows:saved?VROWS.concat([['우리가게','myshop.example.com · myshop01']]):VROWS,vNew:saved?2:-1,vNewK:1-seg(p,.9,1),vForm:saved?[]:f,vFocus:p<.12?-1:p<.3?0:p<.48?1:p<.62?2:p<.8?3:-1,vSaveHot:p>.76&&p<.84}),
+       spot:saved?{r:wr(vGeo(VP).x+22,vGeo(VP).y+104+2*40,vGeo(VP).w-44,34),label:'비밀번호는 다시 안 보여요',a:seg(p,.84,.9)}:null};}},
+  {id:'chrome',name:'크롬에서 가져오기',head:'[크롬에서] 한 번에 가져오기',short:'[크롬에서]|한 번에 가져오기',min:13,
+   narr:'크롬에 저장해 둔 비밀번호도 가져올 수 있어요. 크롬에서 내보낸 파일을 고르면, 모두 한 번에 넣거나 하나씩 골라 넣을 수 있습니다.',
+   app:'pt',cam:[[0,800,330,1.7],[.1,800,560,1.1],[1,800,560,1.1]],
+   cur:[[0,...vSaveP(VP)],[.12,...vImpBtn(VP)],[.2,...vImpBtn(VP)],[.36,...vImpP(VP,3,'pick')],[.44,...vImpP(VP,3,'pick')],[.62,...vImpP(VP,3,'all')],[.72,...vImpP(VP,3,'all')],[1,...vImpP(VP,3,'all')]],clicks:[.18,.42,.7],ev:[[.2,'pop'],[.46,'pop'],[.74,'tick'],[.86,'ding']],
+   view:p=>{const L=[['accounts.google.com','tester@gmail.com'],['naver.com','kkm_shop'],['github.com','km-dev'],['notion.so','kkm@work.com'],['figma.com','kkm@work.com']];
+     const k=segL(p,.72,.86);const list=p>.46?L.map((q,i)=>[q[0],q[1],i===1?'dup':(k*5>i?'ok':'')]):null;
+     return{st:PS({panes:mk(1,()=>({globe:'n'})),vault:1,vRows:VROWS.concat([['우리가게','myshop.example.com · myshop01']]),impBtnHot:p>.1&&p<.2,imp:p>.2?{a:seg(p,.2,.26),h:330,pickHot:p>.34&&p<.46,list,allHot:p>.6&&p<.72,busy:p>.72&&p<.86?'가져오는 중 '+Math.round(k*4)+'/4':null}:null}),
+       spot:p>.46&&p<.7?{r:wr(vGeo(VP).x+vGeo(VP).w-196,vGeo(VP).y+114+3*40+48+78,150,28),label:'모두 한 번에',a:seg(p,.5,.56)*(1-seg(p,.66,.7))}:p>=.86?{r:wr(vGeo(VP).x+36,vGeo(VP).y+114+3*40+48+118,vGeo(VP).w-72,174),label:'겹치는 건 건너뛰어요',a:seg(p,.86,.92)}:null};}},
+  {id:'ai',name:'AI 는 이름만',head:'AI는 [이름만] 불러요',short:'AI는|[이름만] 불러요',min:12,
+   narr:'AI는 로그인 화면을 만나면 이름만 부르고, 파워터미널이 저장된 주소인지 확인한 뒤 직접 입력합니다. AI는 비밀번호를 끝까지 보지 못해요.',
+   app:'pt',cam:FULL,ev:[[.4,'key'],[.46,'key'],[.6,'key'],[.66,'key'],[.8,'ding']],
+   view:p=>{const w={tabs:[['[쇼핑몰] 관리자 로그인',1,'#7C3AED','쇼핑몰']],url:'myshop.example.com/admin',page:'shop',focus:p<.55?0:1,id:p>.36?typedTo('myshop01',p,.38,.5):'',pw:Math.floor(segL(p,.56,.7)*8),btnHot:p>.72&&p<.78,dash:p>.78};
+     return{st:PS({split:SPL,panes:mk(1,()=>({globe:'n',lines:T_EMPTY.concat([['',''],reqLine('관리자 로그인해서 주문 확인해줘'),['',''],['● login("우리가게") 부르는 중','#86EFAC',1],['  ⎿  PT 가 주소 확인 후 입력함','#9CA3AF'],['  ⎿  비밀번호는 AI 에게 안 보임','#9CA3AF']].slice(0,p<.2?2:p<.36?4:7)),status:p<.8?'busy':'done',busy:p<.8?p*30:0})),web:w,webR:wr(SPL+10,66,SW-SPL-20,900)}),
+       spot:p<.36?{r:wr(PP.term(0,1,SPL).x,PP.term(0,1,SPL).y+150,PP.term(0,1,SPL).w,40),label:'이름만 부름',a:seg(p,.2,.26)*(1-seg(p,.32,.36))}:p<.78?{r:wr(SPL+10+((SW-SPL-20)/2)-170,66+78+165,340,170),label:'PT 가 직접 입력',a:seg(p,.38,.44)*(1-seg(p,.74,.78))}:null};}},
+  outro('비밀번호는 안전하게,','[로그인은 알아서.]','비밀번호는 안전하게, 로그인은 알아서. 파워터미널이었습니다.'),
+];
+
+/* 9. 도우미 */
+const HELP_SCENES=[
+  hook('AI가 다 만들어 줬는데','그래서…','이제 나는 뭘 누르면 되죠?','[도우미]가 짚어 드려요',['①','②'],'AI가 다 만들어 줬는데, 이제 나는 뭘 누르면 되죠? 도우미가 짚어 드려요.'),
+  intro('파워터미널 AI 도구편입니다. 할 일을 화면에서 하나씩 짚어 주는 도우미를 알려 드릴게요.'),
+  {id:'install',name:'도우미 설치',head:'위쪽 [도우미 설치]',short:'위쪽|[도우미 설치]',min:9,
+   narr:'위쪽 도우미 설치를 한 번 누르세요. 화면 위에 말풍선을 띄우는 작은 앱이 이 컴퓨터에 설치됩니다.',
+   app:'pt',cam:[[0,800,500,1.04],[.2,780,120,2],[1,780,120,2]],cur:[[0,800,400],[.24,...HBP('helper')],[.36,...HBP('helper')],[1,...HBP('helper')]],clicks:[.34],ev:[[.6,'ding']],
+   view:p=>({st:PS({hb:p>.22&&p<.4?'helper':null,helperOn:p>.58?true:null,panes:mk(4),toast:'도우미를 설치했어요',toastA:seg(p,.58,.64)}),spot:{r:HBR('helper'),label:p<.58?'한 번만 설치':'설치됨',a:seg(p,.1,.16)}})},
+  {id:'ask',name:'알려줘',head:'단추 누르고 [알려줘]',short:'단추 누르고|[알려줘]',min:11,
+   narr:'도우미 단추를 누르고 알려줘를 누르면, 그 세션에 방금 요청한 일을 내가 직접 해 보는 순서로 안내해 줍니다.',
+   app:'pt',cam:[[0,780,120,2],[.25,760,200,1.6],[1,760,200,1.6]],cur:[[0,...HBP('helper')],[.1,...HBP('helper')],[.4,...HP_GO],[.5,...HP_GO],[1,...HP_GO]],clicks:[.08,.48],ev:[[.12,'pop'],[.52,'whoosh']],
+   view:p=>({st:PS({helperOn:true,panes:mk(4),hp:seg(p,.1,.16)*(1-seg(p,.5,.56)),hpGoHot:p>.38&&p<.52,toast:'「쇼핑몰」 세션에 요청했어요. 곧 첫 단계를 짚어 줘요.',toastA:seg(p,.54,.6)}),spot:p>.16&&p<.5?{r:wr(HPW.x+18,HPW.y+92,HPW.w-36,34),label:'🧭 알려줘',a:seg(p,.24,.3)*(1-seg(p,.46,.5))}:null})},
+  {id:'point',name:'짚어 주기',head:'[말풍선]이 누를 곳을 짚어요',short:'[말풍선]이|누를 곳을 짚어요',min:13,
+   narr:'말풍선이 누를 곳을 짚어 주고, 그대로 하면 저절로 체크된 뒤 다음 할 일로 넘어갑니다.',
+   app:'desk',cam:FULL,cur:[[0,700,700],[.3,800,335],[.42,800,335],[.6,760,600],[.76,800,560],[.84,800,560],[1,800,560]],clicks:[.4,.82],ev:[[.42,'ding'],[.84,'ding']],
+   view:p=>{const fx=EXWIN.x,fy=EXWIN.y;const step=p<.44?0:p<.86?1:2;
+     return{st:PS({web:{tabs:[['쇼핑몰 관리자',1]],url:'localhost:3000/admin',page:'shop',focus:step===1?0:-1,id:step>=1&&p>.6?typedTo('myshop01',p,.6,.74):'',dash:step===2},webR:wr(120,60,1360,820),t:p*20,
+       guide:{a:1,head:step===2?'🧭 우리가게 관리자 써 보기':'🧭 우리가게 관리자 써 보기 · '+(step+1)+' / 3',text:step===0?'관리자 주소가 열렸어요. 「로그인」 화면이 보이면 아이디 칸을 누르세요':step===1?'아이디 칸에 myshop01 을 적으세요':'다 했어요! 오늘 주문이 보여요',done:step===2,x:1000,y:step===0?290:300,
+         ring:step<2?wr(630,315,340,40):null}})};}},
+  {id:'any',name:'어디서든',head:'[평소 크롬]에서도 · [다른 PC]에서도',short:'[평소 크롬]에서도|[다른 PC]에서도',min:11,
+   narr:'평소 쓰는 크롬이나 다른 프로그램 위에서도 짚어 주고, 주소로 접속한 다른 컴퓨터에서도 도우미를 설치해 쓸 수 있어요.',
+   app:'desk',cam:FULL,
+   view:p=>({st:PS({ex:1,exHot:-1,t:p*20,guide:{a:seg(p,.05,.12),head:'🧭 다른 PC 에서 써 보기 · 1 / 2',text:'바탕화면의 「PT Helper」를 두 번 누르세요',x:900,y:300,ring:wr(EXWIN.x+190,EXWIN.y+90+5*40,EXWIN.w-200,38)}})})},
+  outro('다음에 뭘 할지,','[도우미가 알려줘요.]','다음에 뭘 할지, 도우미가 알려줘요. 파워터미널이었습니다.'),
+];
+
+const VIDEOS=[
+  {id:'start',cat:'basic',title:'설치하고 첫 세션 열기',sub:'내려받고 더블클릭, 폴더 고르면 끝',scenes:START_SCENES},
+  {id:'grid',cat:'basic',title:'여러 세션 나란히',sub:'프로젝트마다 AI 하나씩, 한 화면에서',scenes:GRID_SCENES},
+  {id:'phone',cat:'basic',title:'폰으로 이어서',sub:'QR 한 번이면 밖에서도 같은 화면',scenes:PHONE_SCENES},
+  {id:'input',cat:'ask',title:'요청창 빠르게 쓰기',sub:'단추 · 그림 · 말 · 질문 기록',scenes:INPUT_SCENES},
+  {id:'book',cat:'ask',title:'노트모드',sub:'긴 대화를 책처럼 넘겨 읽기',scenes:BOOK_SCENES},
+  {id:'auto',cat:'ask',title:'자동 실행',sub:'정한 때에, 한도가 풀리면 바로',scenes:AUTO_SCENES},
+  {id:'browser',cat:'ai',title:'AI에게 브라우저 맡기기',sub:'AI가 진짜 크롬으로 열고 눌러요',scenes:BRW_SCENES},
+  {id:'vault',cat:'ai',title:'로그인 보관함',sub:'비밀번호를 보여 주지 않고 로그인',scenes:VAULT_SCENES},
+  {id:'helper',cat:'ai',title:'도우미',sub:'할 일을 화면에서 하나씩 짚어 줘요',scenes:HELP_SCENES},
+];
+
+/* ───────────────────────── 설정 (브라우저에 저장) ───────────────────────── */
+const DEF={fmt:'pc',voice:'',rate:1.05,nm:'rec',bgm:'tech',bgmVol:.45,duck:true,sfxVol:.7,sfx:{click:1,whoosh:1,pop:1,ding:1,key:1,tick:1},cap:true,capScale:1,master:.9,texts:{},video:'t-class',pmode:'off',lang:'ko',textsEn:{}};
+const LSK='pt-video-cfg-v1';
+let cfg=JSON.parse(JSON.stringify(DEF));
+try{const s=JSON.parse(localStorage.getItem(LSK)||'null');if(s)cfg=Object.assign(cfg,s,{sfx:Object.assign({},DEF.sfx,s.sfx||{})});}catch(e){}
+if(SOLO&&SOLO.cfg)cfg=Object.assign(cfg,SOLO.cfg);
+cfg.lang=LANG;
+let saveT=0;function saveCfg(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LSK,JSON.stringify(cfg));}catch(e){}},250);}
+
+const IDB={db:null,
+  open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{try{const r=indexedDB.open('pt-video',1);r.onupgradeneeded=()=>r.result.createObjectStore('blobs');r.onsuccess=()=>{this.db=r.result;res(this.db);};r.onerror=()=>rej(r.error);}catch(e){rej(e);}});},
+  async tx(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction('blobs',mode),s=t.objectStore('blobs');const q=fn(s);t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error);});},
+  get(k){return this.tx('readonly',s=>s.get(k)).catch(()=>null);},
+  put(k,v){return this.tx('readwrite',s=>s.put(v,k)).catch(()=>null);},
+  del(k){return this.tx('readwrite',s=>s.delete(k)).catch(()=>null);},
+  keys(){return this.tx('readonly',s=>s.getAllKeys()).catch(()=>[]);},
+};
+
+/* ───────────────────────── 소리 엔진 (파일 없이 브라우저가 직접 만든다) ───────────────────────── */
+const AU={ac:null};
+function audioInit(){
+  if(AU.ac)return AU.ac;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  const ac=new AC();AU.ac=ac;
+  AU.out=ac.createGain();AU.out.gain.value=cfg.master;
+  const comp=ac.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.2;
+  comp.connect(AU.out);AU.out.connect(ac.destination);
+  try{AU.dest=ac.createMediaStreamDestination();AU.out.connect(AU.dest);}catch(e){AU.dest=null;}
+  AU.music=ac.createGain();AU.music.gain.value=0;AU.music.connect(comp);
+  AU.mlp=ac.createBiquadFilter();AU.mlp.type='lowpass';AU.mlp.frequency.value=5200;AU.mlp.connect(AU.music);
+  AU.sfx=ac.createGain();AU.sfx.gain.value=cfg.sfxVol;AU.sfx.connect(comp);
+  AU.narr=ac.createGain();AU.narr.gain.value=1.1;AU.narr.connect(comp);
+  const nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;AU.noise=nb;
+  return ac;
+}
+function wake(){const ac=audioInit();if(ac&&ac.state==='suspended')ac.resume();return ac;}
+function osc(type,f,t,dur,g,dest,o={}){const ac=AU.ac,v=ac.createOscillator(),e=ac.createGain();v.type=type;v.frequency.setValueAtTime(f,t);if(o.fEnd)v.frequency.exponentialRampToValueAtTime(o.fEnd,t+dur);if(o.detune)v.detune.value=o.detune;
+  const a=o.a||.005;e.gain.setValueAtTime(.0001,t);e.gain.exponentialRampToValueAtTime(g,t+a);if(o.hold)e.gain.setValueAtTime(g,t+a+o.hold);e.gain.exponentialRampToValueAtTime(.0001,t+dur);v.connect(e);e.connect(dest);v.start(t);v.stop(t+dur+.05);}
+function noise(t,dur,g,dest,o={}){const ac=AU.ac,s=ac.createBufferSource();s.buffer=AU.noise;const bq=ac.createBiquadFilter();bq.type=o.type||'highpass';bq.frequency.setValueAtTime(o.f||6000,t);if(o.fEnd)bq.frequency.exponentialRampToValueAtTime(o.fEnd,t+dur);bq.Q.value=o.q||1;
+  const e=ac.createGain(),a=o.a||Math.min(.008,dur/3);e.gain.setValueAtTime(.0001,t);e.gain.exponentialRampToValueAtTime(g,t+a);e.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(bq);bq.connect(e);e.connect(dest);s.start(t,Math.random()*.4);s.stop(t+dur+.05);}
+const mtof=n=>440*Math.pow(2,(n-69)/12);
+
+const SFX={
+  click:t=>{osc('sine',1700,t,.05,.35,AU.sfx,{fEnd:500});noise(t,.03,.18,AU.sfx,{f:4000});},
+  whoosh:t=>{noise(t,.55,.32,AU.sfx,{type:'bandpass',f:300,fEnd:3200,q:.9,a:.22});},
+  pop:t=>{osc('sine',520,t,.12,.3,AU.sfx,{fEnd:980});},
+  ding:t=>{osc('sine',1318.5,t,.9,.22,AU.sfx);osc('sine',1975.5,t+.07,.8,.15,AU.sfx);osc('triangle',2637,t+.07,.3,.04,AU.sfx);},
+  key:t=>{noise(t,.05,.35,AU.sfx,{type:'bandpass',f:2400,q:1.4});osc('sine',180,t,.06,.25,AU.sfx);},
+  tick:t=>{osc('sine',1250,t,.05,.12,AU.sfx);},
+};
+const SFX_NAMES={click:'누를 때 딸깍',whoosh:'장면 바뀔 때 휙',pop:'창 열릴 때 뽁',ding:'완료 띵',key:'키보드 탁',tick:'짚어줄 때 톡'};
+function sfx(name){if(!AU.ac||!cfg.sfx[name])return;try{SFX[name](AU.ac.currentTime+.005);}catch(e){}}
+
+/* 배경음 — 8분음표 단위로 미리 깔아 둔다 */
+const kick=(t,g)=>osc('sine',130,t,.22,g,AU.mlp,{fEnd:42});
+const hat=(t,g)=>noise(t,.045,g,AU.mlp,{f:7500});
+const clap=(t,g)=>noise(t,.14,g,AU.mlp,{type:'bandpass',f:1600,q:.8});
+const pad=(t,notes,dur,g)=>notes.forEach(n=>{osc('triangle',mtof(n),t,dur,g,AU.mlp,{a:.35,hold:dur*.5});osc('sine',mtof(n),t,dur,g*.8,AU.mlp,{a:.35,hold:dur*.5,detune:7});});
+const BGM={
+  tech:{name:'산뜻 테크',bpm:100,ch:[[48,55,59,64],[43,55,59,62],[45,55,60,64],[41,53,57,64]],
+    step(n,t,sd){const bar=Math.floor(n/8),s=n%8,ch=this.ch[bar%4];
+      if(s===0){pad(t,ch.slice(1),sd*8,.03);osc('sine',mtof(ch[0]-12),t,sd*3,.16,AU.mlp,{a:.02});}
+      if(s===0||s===4||s===5&&bar%2)kick(t,.42);
+      if(s===2||s===6)clap(t,.09);
+      if(s%2)hat(t,.05);
+      const arp=[1,2,3,2,1,3,2,3][s];osc('triangle',mtof(ch[arp]+12),t,sd*1.6,.045,AU.mlp,{a:.004});}},
+  piano:{name:'잔잔 피아노',bpm:74,ch:[[48,55,64,67],[45,52,60,64],[41,48,57,64],[43,50,59,62]],
+    step(n,t,sd){const bar=Math.floor(n/8),s=n%8,ch=this.ch[bar%4];
+      if(s===0){osc('sine',mtof(ch[0]-12),t,sd*7,.12,AU.mlp,{a:.03});pad(t,ch.slice(1),sd*8,.012);}
+      const pat=[1,2,3,2,null,3,2,1][s];if(pat!=null){const f=mtof(ch[pat]+12);osc('sine',f,t,sd*4,.07,AU.mlp,{a:.004});osc('triangle',f*2,t,sd*1.5,.012,AU.mlp,{a:.004});}}},
+  bright:{name:'통통 경쾌',bpm:116,ch:[[53,57,60,64],[50,57,62,65],[46,53,58,62],[48,55,60,64]],
+    step(n,t,sd){const bar=Math.floor(n/8),s=n%8,ch=this.ch[bar%4];
+      if(s===0||s===4)kick(t,.4);if(s===2||s===6)clap(t,.11);noise(t,.03,.03,AU.mlp,{f:9000});
+      if(s===0)osc('sine',mtof(ch[0]-12),t,sd*2,.15,AU.mlp,{a:.01});
+      const m=[1,3,2,3,1,2,3,2][s];const f=mtof(ch[m]+12);osc('sine',f,t,sd*1.1,.08,AU.mlp,{a:.003});osc('sine',f*4,t,.06,.012,AU.mlp,{a:.002});}},
+};
+const MUS={timer:null,src:null,custom:null,customName:''};
+function musicStart(vt){
+  musicStop();if(!AU.ac||cfg.bgm==='none')return;
+  if(cfg.bgm==='custom'){if(!MUS.custom)return;const s=AU.ac.createBufferSource();s.buffer=MUS.custom;s.loop=true;s.connect(AU.mlp);s.start(AU.ac.currentTime+.02,vt%MUS.custom.duration);MUS.src=s;return;}
+  const P=BGM[cfg.bgm];if(!P)return;const sd=60/P.bpm/2;let n=Math.ceil(vt/sd-1e-6);let next=AU.ac.currentTime+.03+(n*sd-vt);
+  const tick=()=>{while(next<AU.ac.currentTime+.3){try{P.step(n,next,sd);}catch(e){}n++;next+=sd;}};tick();MUS.timer=setInterval(tick,50);
+}
+function musicStop(){if(MUS.timer){clearInterval(MUS.timer);MUS.timer=null;}if(MUS.src){try{MUS.src.stop();}catch(e){}MUS.src=null;}if(AU.ac)AU.music.gain.setTargetAtTime(0,AU.ac.currentTime,.05);}
+
+/* ───────────────────────── 나레이션 ───────────────────────── */
+const REC={};      // key -> {buf, dur, blob}
+const recKey=(vid,sid)=>vid+'/'+sid+(LANG==='en'?'@en':'');
+const TX=()=>LANG==='en'?(cfg.textsEn=cfg.textsEn||{}):cfg.texts;   // 고친 대사는 언어별로 따로 둔다
+const V=()=>VIDEOS.find(v=>v.id===cfg.video)||VIDEOS[0];
+const narrText=(v,s)=>(TX()[v.id]&&TX()[v.id][s.id]!=null)?TX()[v.id][s.id]:tr(s.narr);
+const recOf=(v,s)=>cfg.nm==='rec'?REC[recKey(v.id,s.id)]:null;
+const capMax=()=>LANG==='en'?56:30;
+const estTTS=txt=>{if(LANG==='en')return txt.length*.066/cfg.rate+.4;const n=txt.replace(/\s/g,'').length;return n*.168/cfg.rate+.4;};
+function capChunks(text){
+  const sents=(text.match(/[^.?!]+[.?!]?/g)||[]).map(s=>s.trim()).filter(Boolean),out=[];
+  sents.forEach(s=>{if(s.length<=capMax()){out.push(s);return;}const parts=s.split(/,\s*/);let cur='';
+    parts.forEach((pt,i)=>{const piece=pt+(i<parts.length-1?',':'');if(cur&&(cur+' '+piece).length>capMax()){out.push(cur);cur=piece;}else cur=cur?cur+' '+piece:piece;});if(cur)out.push(cur);});
+  return out;
+}
+let TOTAL=0;
+function rebuild(){
+  const v=V();let t=0;
+  v.scenes.forEach(s=>{const txt=narrText(v,s),r=recOf(v,s);s._lead=s.lead!=null?s.lead:.45;s._nd=r?r.dur:estTTS(txt);
+    s._dur=Math.max(s.min||4,s._lead+s._nd+.75);s._t0=t;t+=s._dur;
+    const ch=capChunks(txt),tot=ch.reduce((a,c)=>a+c.length,0)||1;let acc=0;s._caps=ch.map(c=>{const a=acc;acc+=c.length;return{t:c,a:s._lead+s._nd*a/tot,b:s._lead+s._nd*acc/tot};});
+    s._events=[];if(s.clicks)s.clicks.forEach(p=>s._events.push([s._t0+p*s._dur,'click']));if(s.ev)s.ev.forEach(e=>s._events.push([s._t0+e[0]*s._dur,e[1]]));
+    if(s._t0>0)s._events.push([s._t0+.02,'whoosh']);});
+  TOTAL=t;
+}
+function sceneAt(t){const sc=V().scenes;for(let i=0;i<sc.length;i++){if(t<sc[i]._t0+sc[i]._dur)return i;}return sc.length-1;}
+
+/* 임시 목소리 (브라우저 읽어주기) */
+let VOICES=[];
+function loadVoices(){if(!('speechSynthesis' in window))return;VOICES=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));fillVoiceSelect();}
+function pickVoice(){if(!VOICES.length)return null;return VOICES.find(v=>v.voiceURI===cfg.voice)||VOICES.find(v=>/SunHi|Neural|Natural|Online/i.test(v.name))||VOICES.find(v=>/Google/i.test(v.name))||VOICES[0];}
+function speak(txt){if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang=LANG==='en'?'en-US':'ko-KR';u.rate=cfg.rate;const vo=LANG==='en'?(speechSynthesis.getVoices().find(x=>/^en[-_]US/i.test(x.lang))||speechSynthesis.getVoices().find(x=>/^en/i.test(x.lang))):pickVoice();if(vo)u.voice=vo;speechSynthesis.speak(u);}
+function hush(){if('speechSynthesis' in window)speechSynthesis.cancel();}
+
+/* ───────────────────────── 화면 합성 (PC 16:9 · 쇼츠 9:16) ───────────────────────── */
+const cv=$('cv'),cx=cv.getContext('2d');
+const LAYOUT={
+  pc:{W:1920,H:1080,box:{x:0,y:204,w:1920,h:876,cx:960,cy:642,bs:.84,r:0},zmul:1,zmin:1},
+  short:{W:1080,H:1920,box:{x:40,y:480,w:1000,h:940,cx:540,cy:950,bs:.625,r:36},zmul:1.55,zmin:1.5},
+};
+function drawBg(c,L,t){
+  const g=c.createLinearGradient(0,0,0,L.H);g.addColorStop(0,'#130F1C');g.addColorStop(1,'#0B0910');c.fillStyle=g;c.fillRect(0,0,L.W,L.H);
+  const m=Math.max(L.W,L.H);
+  const b1=c.createRadialGradient(L.W*.18+Math.sin(t*.25)*60,L.H*.2,0,L.W*.18,L.H*.2,m*.55);b1.addColorStop(0,'rgba(138,56,245,.30)');b1.addColorStop(1,'rgba(138,56,245,0)');c.fillStyle=b1;c.fillRect(0,0,L.W,L.H);
+  const b2=c.createRadialGradient(L.W*.86,L.H*.82+Math.cos(t*.21)*50,0,L.W*.86,L.H*.82,m*.5);b2.addColorStop(0,'rgba(213,58,107,.24)');b2.addColorStop(1,'rgba(213,58,107,0)');c.fillStyle=b2;c.fillRect(0,0,L.W,L.H);
+  c.fillStyle='rgba(255,255,255,.035)';for(let y=24;y<L.H;y+=48)for(let x=24;x<L.W;x+=48)c.fillRect(x,y,2,2);
+}
+function camMap(L,cam){
+  const b=L.box;const z=L===LAYOUT.short?(cam.raw?cam[2]:Math.max(L.zmin,cam[2]*L.zmul)):cam[2];const S=b.bs*z;
+  const fit=(v,lo,hi)=>lo<=hi?clamp(v,lo,hi):(lo+hi)/2;
+  const x=fit(cam[0],(b.cx-b.x)/S,SW-(b.x+b.w-b.cx)/S),y=fit(cam[1],(b.cy-b.y)/S,SH+160-(b.y+b.h-b.cy)/S);
+  return{S,x,y,m:(sx,sy)=>[b.cx+(sx-x)*S,b.cy+(sy-y)*S]};
+}
+// 앱 전체가 들어오는 카메라 (장면에 fit:[x0,y0,x1,y1] 을 주면 그 범위, 없으면 교실 창 · 파일 보내기는 탐색기까지)
+function fitCam(L,s){const e=s.fit||[0,0,1600,1000],b=L.box;return[(e[0]+e[2])/2,(e[1]+e[3])/2,Math.min(b.w/(e[2]-e[0]),b.h/(e[3]-e[1]))/b.bs];}
+function appLayer(c,L,app,st,cam,dx){
+  const b=L.box,M=camMap(L,cam);
+  c.save();c.translate(dx,0);
+  if(L===LAYOUT.pc){const [x0,y0]=M.m(0,0),[x1,y1]=M.m(SW,SH);c.save();c.beginPath();c.rect(b.x,b.y,b.w,b.h);c.clip();
+    shadowed(c,80,30,'rgba(0,0,0,.55)',()=>{c.fillStyle='#000';RR(c,x0,y0,x1-x0,y1-y0,16*M.S);c.fill();});
+    c.save();RR(c,x0,y0,x1-x0,y1-y0,16*M.S);c.clip();}
+  else{c.save();RR(c,b.x,b.y,b.w,b.h,b.r);c.clip();c.fillStyle='#0E1420';c.fillRect(b.x,b.y,b.w,b.h);}
+  c.save();c.translate(b.cx,b.cy);c.scale(M.S,M.S);c.translate(-M.x,-M.y);APPS[app](c,st);c.restore();
+  c.restore();if(L===LAYOUT.pc)c.restore();c.restore();
+  return M;
+}
+function boxClip(c,L){const b=L.box;if(L===LAYOUT.pc){c.beginPath();c.rect(b.x,b.y,b.w,b.h);}else{RR(c,b.x,b.y,b.w,b.h,b.r);}}
+function spotDraw(c,L,M,sp,t){
+  if(!sp||sp.a<=0.01)return;const pad=10;const [x0,y0]=M.m(sp.r.x,sp.r.y),[x1,y1]=M.m(sp.r.x+sp.r.w,sp.r.y+sp.r.h);
+  const x=x0-pad,y=y0-pad,w=x1-x0+pad*2,h=y1-y0+pad*2,rad=14;
+  c.save();boxClip(c,L);c.clip();c.globalAlpha=sp.a;
+  c.beginPath();c.rect(0,0,L.W,L.H);c.roundRect(x,y,w,h,rad);c.fillStyle='rgba(10,7,16,.5)';c.fill('evenodd');
+  const pu=1+.5*(Math.sin(t*5)+1)/2;c.lineWidth=4*pu;c.strokeStyle=gradD(c,x,y,w,h,'#A855F7','#F472B6');RR(c,x,y,w,h,rad);c.stroke();
+  c.restore();
+  if(!sp.label)return;
+  const fs=L===LAYOUT.pc?30:40;const tw=TW(c,sp.label,fs,700)+fs*1.4,th=fs*1.9;
+  const top=L.box.y+16;let ly=y-th-18;let below=false;if(ly<top){ly=y+h+18;below=true;}
+  if(ly+th>L.box.y+L.box.h-(L===LAYOUT.pc?130:20)){ly=Math.max(top,y+h/2-th/2);}
+  let lx=clamp(x+w/2-tw/2,24,L.W-24-tw);
+  c.save();c.globalAlpha=sp.a;c.translate(0,(1-sp.a)*(below?-12:12));
+  shadowed(c,24,8,'rgba(138,56,245,.45)',()=>{c.fillStyle=gradD(c,lx,ly,tw,th);RR(c,lx,ly,tw,th,th/2);c.fill();});
+  T(c,sp.label,lx+tw/2,ly+th/2+1,{s:fs,w:700,c:'#fff',a:'center'});c.restore();
+}
+const CUR_PATH=new Path2D('M4 2.5 L4 21 L9 16.5 L12.5 24 L16 22.4 L12.6 15 L19.5 15 Z');
+function cursorDraw(c,L,M,s,p,ts){
+  if(!s.cur)return;let a=1;if(s.curHide!=null)a=1-seg(p,s.curHide,s.curHide+.04);if(a<=0)return;
+  const pts=s.cur.map(q=>[q[0],q[1],q[2]]);const [sx,sy]=kf(pts,p);const [x,y]=M.m(sx,sy);
+  const sc=L===LAYOUT.pc?1.7:2.3;
+  (s.clicks||[]).forEach(cp=>{const dt=ts-cp*s._dur;if(dt>=0&&dt<.5){const k=dt/.5;c.save();c.globalAlpha=(1-k)*a;c.strokeStyle='#fff';c.lineWidth=4;c.beginPath();c.arc(x,y,12+46*eOut(k),0,7);c.stroke();c.fillStyle='rgba(168,85,247,.35)';c.beginPath();c.arc(x,y,10+20*eOut(k),0,7);c.fill();c.restore();}});
+  const down=(s.clicks||[]).some(cp=>Math.abs(ts-cp*s._dur)<.09);
+  c.save();c.globalAlpha=a;c.translate(x-4*sc,y-2*sc);c.scale(sc*(down?.9:1),sc*(down?.9:1));c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=8;c.shadowOffsetY=3;
+  c.fillStyle='#fff';c.fill(CUR_PATH);c.shadowColor='transparent';c.strokeStyle='#111';c.lineWidth=1.4;c.lineJoin='round';c.stroke(CUR_PATH);c.restore();
+}
+function rich(str){str=tr(str);return str.split('|').map(line=>{const parts=[];line.replace(/\[([^\]]+)\]|([^\[]+)/g,(m,a,b)=>{parts.push(a?{t:a,g:1}:{t:b,g:0});});return parts;});}
+/* 너비를 넘는 줄은 낱말 사이에서 나눈다 (영문판은 문장이 길어서) */
+function richWrap(c,lines,size,maxW){c.font=`700 ${size}px ${FONT}`;const out=[];
+  const cut=(parts,lim)=>{const o=[];let cur=[],cw=0;parts.forEach(q=>q.t.split(/(?<= )/).forEach(tok=>{const tw=c.measureText(tok).width;
+    if(cur.length&&cw+c.measureText(tok.trimEnd()).width>lim){const l=cur[cur.length-1];l.t=l.t.trimEnd();o.push(cur);cur=[];cw=0;}
+    const l=cur[cur.length-1];if(l&&l.g===q.g)l.t+=tok;else cur.push({t:tok,g:q.g});cw+=tw;}));if(cur.length)o.push(cur);return o;};
+  lines.forEach(parts=>{const W=parts.reduce((s,q)=>s+c.measureText(q.t).width,0);if(W<=maxW){out.push(parts);return;}
+    const n=Math.ceil(W/maxW);let best=cut(parts,maxW);   // 줄 수는 그대로 두고, 줄 길이가 비슷해지는 가장 좁은 너비를 찾는다
+    for(let lim=W/n;lim<maxW;lim+=maxW*.03){const o=cut(parts,lim);if(o.length<=best.length){best=o;break;}}
+    out.push(...best);});return out;}
+function richDraw(c,lines,x,y,size,lh,align,ts,delay=0){
+  c.font=`700 ${size}px ${FONT}`;c.textBaseline='alphabetic';c.textAlign='left';
+  if(align==='center'){const room=2*Math.min(x,c.canvas.width-x)-70,wd=Math.max(...lines.map(parts=>parts.reduce((s,q)=>s+c.measureText(q.t).width,0)));if(wd>room)size=size*room/wd;}   // 그래도 넘치면 글자를 줄인다
+  lines.forEach((parts,li)=>{c.font=`700 ${size}px ${FONT}`;const w=parts.reduce((s,q)=>s+c.measureText(q.t).width,0);let px=align==='center'?x-w/2:x;
+    const k=seg(ts,delay+li*.12,delay+.55+li*.12);c.save();c.globalAlpha*=k;const yy=y+li*lh+(1-k)*26;
+    parts.forEach(q=>{const pw=c.measureText(q.t).width;c.fillStyle=q.g?gradH(c,px,pw,'#B57BFF','#F472B6'):'#fff';c.fillText(q.t,px,yy);px+=pw;});c.restore();});
+}
+function wrapLines(c,text,maxW,size,w){c.font=`${w} ${size}px ${FONT}`;const words=text.split(' ');const lines=[];let line='';
+  words.forEach(wd=>{const test=line?line+' '+wd:wd;if(c.measureText(test).width>maxW&&line){lines.push(line);line=wd;}else line=test;});if(line)lines.push(line);return lines;}
+function capDraw(c,L,s,ts){
+  if(s.noCap||!cfg.cap||!s._caps||!s._caps.length)return;const cur=s._caps.find(q=>ts>=q.a&&ts<q.b+.15)||(ts>=s._caps[s._caps.length-1].b?s._caps[s._caps.length-1]:null);
+  if(!cur||ts<s._lead)return;const pc=L===LAYOUT.pc;const fs=Math.round((pc?38:52)*cfg.capScale),maxW=pc?1500:940;
+  const lines=wrapLines(c,cur.t,maxW,fs,600);const lh=fs*1.38;const bw=Math.max(...lines.map(l=>c.measureText(l).width))+fs*1.3,bh=lines.length*lh+fs*.7;
+  const bx=L.W/2-bw/2,by=pc?L.H-48-bh:1460;const k=seg(ts,cur.a-.05,cur.a+.15);
+  c.save();c.globalAlpha=.4+.6*k;c.fillStyle='rgba(12,9,18,.8)';RR(c,bx,by,bw,bh,fs*.45);c.fill();
+  lines.forEach((l,i)=>T(c,l,L.W/2,by+fs*.35+lh*i+lh/2,{s:fs,w:600,c:'#fff',a:'center'}));c.restore();
+}
+function catOf(v){return CATS.find(c=>c.id===v.cat);}
+function headDraw(c,L,v,s,i,ts){
+  const pc=L===LAYOUT.pc;const cat=catOf(v);const label=cat.name+' · '+v.title;
+  if(pc){const by=L.box.y,sg=c.createLinearGradient(0,by,0,by+36);sg.addColorStop(0,'rgba(17,13,25,.9)');sg.addColorStop(1,'rgba(17,13,25,0)');c.fillStyle=sg;c.fillRect(0,by,L.W,36);
+    const w=TW(c,label,22,600)+60;c.fillStyle='rgba(255,255,255,.08)';RR(c,64,40,w,44,22);c.fill();c.fillStyle=cat.c;c.beginPath();c.arc(88,62,6,0,7);c.fill();T(c,label,104,63,{s:22,w:600,c:'#E9E4F2'});
+    const steps=v.scenes.filter(q=>!q.kind);T(c,String(steps.indexOf(s)+1).padStart(2,'0')+' / '+String(steps.length).padStart(2,'0'),64+w+18,63,{s:22,w:600,c:'#8A8399'});
+    richDraw(c,rich((s.head||'').replace(/\|/g,' ')),64,148,54,64,'left',ts);}
+  else{const w=TW(c,label,30,600)+76;const x=L.W/2-w/2;c.fillStyle='rgba(255,255,255,.08)';RR(c,x,150,w,58,29);c.fill();c.fillStyle=cat.c;c.beginPath();c.arc(x+30,179,8,0,7);c.fill();T(c,label,x+48,180,{s:30,w:600,c:'#E9E4F2'});
+    richDraw(c,rich(s.short||s.head||''),L.W/2,318,76,94,'center',ts);}
+}
+function progDraw(c,L,v,t){
+  const pc=L===LAYOUT.pc;
+  if(pc){c.fillStyle='rgba(255,255,255,.1)';c.fillRect(0,L.H-6,L.W,6);c.fillStyle=gradH(c,0,L.W);c.fillRect(0,L.H-6,L.W*clamp(t/TOTAL),6);return;}
+  const sc=v.scenes,gap=8,x0=40,w=(L.W-80-gap*(sc.length-1))/sc.length;
+  sc.forEach((s,i)=>{const x=x0+i*(w+gap);c.fillStyle='rgba(255,255,255,.18)';RR(c,x,70,w,8,4);c.fill();const k=clamp((t-s._t0)/s._dur);if(k>0){c.fillStyle='#fff';RR(c,x,70,Math.max(8,w*k),8,4);c.fill();}});
+  crown(c,40,96,36);T(c,BRAND_NAME,86,114,{s:28,w:700,c:'#fff'});
+}
+/* 맨 앞 한마디 — 설명에 들어가기 전에 던지는 질문 (말하는 속도에 맞춰 한 줄씩 나온다) */
+function hookDraw(c,L,v,s,ts){
+  const pc=L===LAYOUT.pc,cxm=L.W/2,at=k=>s._lead+s._nd*k,qAt=s.qAt||[],t1=s.qs?at(qAt[s.qs.length-1]||.6):at(.62);
+  const Y=pc?{chip:250,call:400,l2:560,l3:730,seat:850}:{chip:520,call:700,l2:900,l3:1070,seat:1400};
+  if(s.qs&&pc){Y.seat+=34;Y.call-=36;Y.chip-=30;}
+  // 뒤에 깔리는 칸 — 마지막 줄이 나오는 순간 왼쪽부터 한꺼번에 켜진다
+  const cols=pc?12:6,rows=pc?2:4,gw=pc?112:132,gh=pc?70:82;
+  for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){const n=r*cols+q,x=cxm+(q-(cols-1)/2)*(gw+16),y=Y.seat+r*(gh+16),on=clamp((ts-t1-.25-(q+r)*.035)/.18),miss=n===7||n===16;
+    c.save();c.globalAlpha=seg(ts,.1,.8)*(.3+.7*on);c.fillStyle=on>0?(miss?'rgba(59,130,246,.16)':'rgba(34,197,94,.16)'):'rgba(255,255,255,.04)';RR(c,x-gw/2,y-gh/2,gw,gh,12);c.fill();
+    c.strokeStyle=on>0?(miss?'#3B82F6':'#22C55E'):'rgba(255,255,255,.14)';c.lineWidth=2;RR(c,x-gw/2,y-gh/2,gw,gh,12);c.stroke();
+    if(on>0&&s.tiles)T(c,s.tiles[miss?1:0],x,y+1,{s:pc?22:26,w:700,c:miss?'#93C5FD':'#86EFAC',a:'center'});c.restore();}
+  // 매 수업 시작마다
+  const chip=s.chip||'',fs0=pc?38:44,cw=TW(c,chip,fs0,600)+fs0*1.6,chh=fs0*1.9;
+  if(chip){c.save();c.globalAlpha=seg(ts,.1,.5);c.fillStyle='rgba(255,255,255,.1)';RR(c,cxm-cw/2,Y.chip-chh/2,cw,chh,chh/2);c.fill();T(c,chip,cxm,Y.chip+1,{s:fs0,w:600,c:'#E9E4F2',a:'center'});c.restore();}
+  // 부르는 말 — 크게 튀어나온다
+  const k1=clamp((ts-at(0))/.4);if(k1>0){const sc=lerp(1.6,1,eBack(k1));c.save();c.globalAlpha=Math.min(1,k1*2.5);c.translate(cxm,Y.call);c.scale(sc,sc);T(c,s.call||'',0,0,{s:pc?150:168,w:700,c:'#fff',a:'center'});c.restore();}
+  if(s.qs){const fs=pc?70:56;let yq=Y.l2-6;s.qs.forEach((q,i)=>{const ls=richWrap(c,rich(q),fs,L.W-(pc?240:90));richDraw(c,ls,cxm,yq,fs,fs*1.22,'center',ts,at(qAt[i]!=null?qAt[i]:.2+i*.25));yq+=fs*1.5+(ls.length-1)*fs*1.22;});}   // 질문을 여러 줄로 던질 때
+  else{const k2=seg(ts,at(.22),at(.22)+.45);c.save();c.globalAlpha=k2;T(c,s.line||'',cxm,Y.l2+(1-k2)*26,{s:pc?76:66,w:700,c:'#E9E4F2',a:'center'});c.restore();
+    richDraw(c,rich(pc?(s.punch||''):(s.punchShort||s.punch||'')),cxm,Y.l3,pc?108:104,130,'center',ts,t1);}
+  const f=clamp((ts-t1)/.35);if(f>0&&f<1){c.fillStyle=`rgba(255,255,255,${.22*(1-f)})`;c.fillRect(0,0,L.W,L.H);}
+}
+function introDraw(c,L,v,s,ts){
+  const pc=L===LAYOUT.pc;const cat=catOf(v);const cxm=L.W/2;const cy=pc?300:600;const cw=pc?150:210;
+  // 떠다니는 자리 칸들
+  const seats=[[1,-1,-.6],[2,1,-.5],[3,-1.1,.55],[4,1.05,.6],[5,0,-1.15]];
+  seats.forEach((f,i)=>{const k=seg(ts,.3+i*.12,1+i*.12);const ox=f[1]*(pc?560:340),oy=f[2]*(pc?300:250);const fl=Math.sin(ts*1.2+i)*10;
+    const sz=pc?1.15:1.4;c.save();c.globalAlpha=k*.85;c.translate(cxm+ox*lerp(1.3,1,k),(pc?520:560)+oy+fl);c.rotate((i%2?.06:-.05));c.scale(sz,sz);
+    shadowed(c,30,12,'rgba(0,0,0,.4)',()=>miniPane(c,i));c.restore();});
+  crown(c,cxm-cw/2,cy-cw*.4,cw,1,seg(ts,.8,1.3),segL(ts,.1,1.1));
+  c.save();c.globalAlpha=seg(ts,.6,1.1);T(c,BRAND_NAME,cxm,cy+cw*.6,{s:pc?44:58,w:700,c:'#fff',a:'center'});c.restore();
+  const chip=cat.name+' 사용법';c.save();c.globalAlpha=seg(ts,1,1.4);const cwid=TW(c,chip,pc?26:36,600)+(pc?56:72);const chy=pc?cy+cw*.6+56:cy+cw*.6+80;
+  c.fillStyle='rgba(255,255,255,.08)';RR(c,cxm-cwid/2,chy,cwid,pc?48:64,pc?24:32);c.fill();c.fillStyle=cat.c;c.beginPath();c.arc(cxm-cwid/2+(pc?26:34),chy+(pc?24:32),pc?6:8,0,7);c.fill();
+  T(c,chip,cxm+(pc?10:14),chy+(pc?25:33),{s:pc?26:36,w:600,c:'#E9E4F2',a:'center'});c.restore();
+  const ty=pc?cy+cw*.6+210:cy+cw*.6+290;richDraw(c,[[{t:tr(v.title),g:1}]],cxm,ty,pc?112:132,140,'center',ts,1.2);
+  c.save();c.globalAlpha=seg(ts,1.7,2.2);T(c,v.sub,cxm,ty+(pc?70:110),{s:pc?34:44,w:500,c:'#BDB6CB',a:'center'});c.restore();
+}
+function outroDraw(c,L,v,s,ts){
+  const pc=L===LAYOUT.pc;const cxm=L.W/2;const y0=pc?430:820;
+  richDraw(c,s.lines.map(l=>rich(l)[0]),cxm,y0,pc?104:112,pc?130:150,'center',ts,.2);
+  const k=seg(ts,1.2,1.7);c.save();c.globalAlpha=k;c.translate(0,(1-k)*20);
+  const lab='PowerTerminal 내려받기  →',fs=pc?32:44,w=TW(c,lab,fs,700)+fs*2.2,h=fs*2.3,y=y0+(pc?200:300);
+  shadowed(c,40,16,'rgba(213,58,107,.5)',()=>{c.fillStyle=gradD(c,cxm-w/2,y,w,h);RR(c,cxm-w/2,y,w,h,h/2);c.fill();});
+  T(c,lab,cxm,y+h/2+1,{s:fs,w:700,c:'#fff',a:'center'});T(c,'pominal.com',cxm,y+h+(pc?52:70),{s:pc?28:38,w:500,c:'#8A8399',a:'center'});c.restore();
+  crown(c,cxm-(pc?40:56),pc?200:520,pc?80:112,seg(ts,.1,.6));
+}
+function render(t){
+  const L=LAYOUT[cfg.fmt],c=cx,v=V();
+  const i=sceneAt(t),s=v.scenes[i],ts=t-s._t0,p=clamp(ts/s._dur);
+  c.setTransform(1,0,0,1,0,0);drawBg(c,L,t);
+  // 장면 전환: 앞 장면이 살짝 사라지며 넘어간다
+  const fadeIn=seg(ts,0,.35);
+  if(s.kind==='hook'){hookDraw(c,L,v,s,ts);if(L===LAYOUT.short)progDraw(c,L,v,t);}
+  else if(s.kind==='intro'){introDraw(c,L,v,s,ts);if(L===LAYOUT.short)progDraw(c,L,v,t);}
+  else if(s.kind==='outro'){c.save();c.globalAlpha=fadeIn;outroDraw(c,L,v,s,ts);c.restore();progDraw(c,L,v,t);}
+  else{
+    const vw=s.view(p);let cam=kf(s.cam,p);let M;
+    if(L===LAYOUT.short&&vw.spot&&vw.spot.a>0){const r=vw.spot.r,a=eIO(clamp(vw.spot.a));cam[0]=lerp(cam[0],r.x+r.w/2,.75*a);cam[1]=lerp(cam[1],r.y+r.h/2,.5*a);}
+    // 쇼츠는 앱이 늘 잘려 보이니, 영상의 첫 앱 장면에서는 앱 전체를 먼저 보여 준 다음 다가간다
+    if(L===LAYOUT.short&&v.scenes.find(q=>!q.kind)===s){const k=eIO(clamp((ts-1.4)/1.1));if(k<1){const f=fitCam(L,s),zc=Math.max(L.zmin,cam[2]*L.zmul);const nc=[lerp(f[0],cam[0],k),lerp(f[1],cam[1],k),lerp(f[2],zc,k)];nc.raw=1;cam=nc;}}
+    if(vw.swap!=null&&vw.swap<1){const prev=v.scenes[i-1];const pv=prev.view(1);const pc=kf(prev.cam,1);const W=L.W*1.05;
+      appLayer(c,L,prev.app,pv.st,pc,-W*vw.swap);M=appLayer(c,L,s.app,vw.st,cam,W*(1-vw.swap));}
+    else M=appLayer(c,L,s.app,vw.st,cam,0);
+    if(L===LAYOUT.short){c.save();c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=2;RR(c,L.box.x,L.box.y,L.box.w,L.box.h,L.box.r);c.stroke();c.restore();}
+    if(i>0&&v.scenes[i-1].kind==='intro'&&ts<.6){c.save();c.globalAlpha=1-seg(ts,0,.6);introDraw(c,L,v,v.scenes[i-1],v.scenes[i-1]._dur);c.restore();}
+    spotDraw(c,L,M,vw.spot,t);cursorDraw(c,L,M,s,p,ts);
+    headDraw(c,L,v,s,i,ts);progDraw(c,L,v,t);
+  }
+  capDraw(c,L,s,ts);
+  if(t>TOTAL-.6){c.fillStyle=`rgba(0,0,0,${seg(t,TOTAL-.6,TOTAL)})`;c.fillRect(0,0,L.W,L.H);}
+}
+
+/* ───────────────────────── 재생기 ───────────────────────── */
+const PL={playing:false,t:0,acStart:0,t0:0,raf:0,narr:[],spoken:-1,duckOn:null};
+function now(){if(PL.playing&&AU.ac)return PL.t0+(AU.ac.currentTime-PL.acStart);return PL.t;}
+function narrStart(vt){
+  narrStop();if(!AU.ac)return;const v=V(),base=AU.ac.currentTime+.03;
+  v.scenes.forEach(s=>{const r=recOf(v,s);if(!r||!r.buf||PL.skip===s.id)return;const ns=s._t0+s._lead,off=vt-ns;if(off>=r.buf.duration)return;
+    const src=AU.ac.createBufferSource();src.buffer=r.buf;src.connect(AU.narr);src.start(base+Math.max(0,-off),Math.max(0,off));PL.narr.push(src);});
+}
+function narrStop(){PL.narr.forEach(s=>{try{s.stop();}catch(e){}});PL.narr=[];hush();}
+function play(){
+  const ac=wake();if(PL.t>=TOTAL-.05)PL.t=0;
+  PL.playing=true;PL.started=true;$('cover').hidden=true;setPlayIcon();
+  if(ac){PL.acStart=ac.currentTime;PL.t0=PL.t;narrStart(PL.t);musicStart(PL.t);PL.duckOn=null;}
+  else{PL.acStart=performance.now()/1000;PL.t0=PL.t;}
+  const sc=V().scenes,i=sceneAt(PL.t),s=sc[i];PL.spoken=(PL.t>s._t0+s._lead+.3)?i:i-1;
+  if(PL.t>s._t0+s._lead+.3&&PL.t<s._t0+s._lead+s._nd*.4){PL.spoken=i;if(!recOf(V(),s))speak(narrText(V(),s));}
+  PL.last=PL.t;cancelAnimationFrame(PL.raf);PL.raf=requestAnimationFrame(loop);
+}
+function pause(){if(!PL.playing)return;PL.t=now();PL.playing=false;cancelAnimationFrame(PL.raf);narrStop();musicStop();setPlayIcon();draw();}
+function seek(t){const was=PL.playing;if(was)pause();PL.t=clamp(t,0,TOTAL);draw();if(was)play();}
+function nowFallback(){return PL.t0+(performance.now()/1000-PL.acStart);}
+function loop(){
+  if(!PL.playing)return;let t=AU.ac?now():nowFallback();
+  if(t>=TOTAL){PL.t=TOTAL;PL.playing=false;narrStop();musicStop();render(TOTAL-.001);setPlayIcon();uiTime(TOTAL);if(EXP.on)setTimeout(exportFinish,350);else if(cfg.pmode!=='off')setTimeout(afterEnd,700);return;}
+  const v=V();
+  // 효과음
+  v.scenes.forEach(s=>s._events.forEach(([et,n])=>{if(et>PL.last&&et<=t)sfx(n);}));
+  // 임시 목소리
+  const i=sceneAt(t),s=v.scenes[i];
+  if(i!==PL.spoken&&t>=s._t0+s._lead){PL.spoken=i;if(!recOf(v,s)&&PL.skip!==s.id)speak(narrText(v,s));}
+  // 배경음 크기 (시작·끝 서서히 + 말할 때 줄이기)
+  if(AU.ac){const inN=t>=s._t0+s._lead&&t<=s._t0+s._lead+s._nd;const fade=Math.min(1,t/1.5,(TOTAL-t)/2.5);
+    const tg=Math.max(0,1.8*cfg.bgmVol*fade*(cfg.duck&&inN?.38:1));if(PL.duckOn===null||Math.abs(tg-PL.duckOn)>.01){AU.music.gain.setTargetAtTime(tg,AU.ac.currentTime,.12);PL.duckOn=tg;}}
+  PL.last=t;render(t);uiTime(t);PL.raf=requestAnimationFrame(loop);
+}
+function draw(){render(PL.t===0&&!PL.started?2.6:Math.min(PL.t,TOTAL-.001));uiTime(PL.t);}
+
+/* ───────────────────────── 화면 (목차 · 설정 · 조작) ───────────────────────── */
+function setPlayIcon(){$('icPlay').innerHTML=PL.playing?'<rect x="3.5" y="2.5" width="3" height="11" rx="1" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" rx="1" fill="currentColor"/>':'<path d="M4 2.5l9 5.5-9 5.5z" fill="currentColor"/>';$('bPlay').setAttribute('aria-label',PL.playing?'일시정지':'재생');}
+let lastSc=-1;
+function uiTime(t){$('tm').textContent=fmtT(t)+' / '+fmtT(TOTAL);const sc=$('scrub');sc.max=Math.round(TOTAL*1000);if(!sc._drag)sc.value=Math.round(t*1000);
+  const i=sceneAt(Math.min(t,TOTAL-.001));if(i!==lastSc){lastSc=i;document.querySelectorAll('#scenes button').forEach((b,j)=>b.setAttribute('aria-current',String(j===i)));document.querySelectorAll('.nitem').forEach((n,j)=>n.classList.toggle('on',j===i));}}
+function buildToc(){
+  const host=$('toc');host.innerHTML='';
+  CATS.forEach(cat=>{const g=document.createElement('div');g.className='grp';g.innerHTML=`<h3 style="--c:${cat.c}"><i></i>${tr(cat.name)}</h3>`;const ul=document.createElement('ul');ul.className='vlist';
+    VIDEOS.filter(v=>v.cat===cat.id).forEach((v,k)=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';b.className='vbtn';b.setAttribute('aria-current',String(v.id===cfg.video));
+      b.innerHTML=`<span class="n">${k+1}</span><span class="t">${tr(v.title)}<small>${tr(v.sub)}</small></span>`;b.onclick=()=>{if(EXP.on||EXP.batch)return;pause();cfg.video=v.id;saveCfg();PL.t=0;rebuild();buildAll();draw();
+        loadNarr(v).then(n=>{if(cfg.video!==v.id||EXP.on||EXP.batch)return;if(n){const was=PL.playing;if(was)pause();PL.t=0;rebuild();buildAll();draw();if(was)play();}
+          if(SHARE&&!PL.playing){PL.t=0;play();try{$('stage').scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}}});};li.appendChild(b);ul.appendChild(li);});
+    if(cat.soon){const so=document.createElement('li');so.className='vsoon';so.innerHTML=`<span class="n">+</span><span>${tr(cat.soon)}</span>`;ul.appendChild(so);}g.appendChild(ul);host.appendChild(g);});
+}
+function buildHead(){const v=V(),cat=catOf(v);const eb=$('eyebrow');eb.style.setProperty('--c',cat.c);const nth=VIDEOS.filter(x=>x.cat===v.cat).indexOf(v)+1;eb.querySelector('span').textContent=tr(cat.name)+' · '+(LANG==='en'?'Video '+nth:nth+'번째 영상');
+  $('vTitle').textContent=tr(v.title);$('vMeta').textContent=tr(v.sub)+(LANG==='en'?' · '+v.scenes.length+' scenes · ':' · 장면 '+v.scenes.length+'개 · ')+fmtT(TOTAL);}
+function buildScenes(){const host=$('scenes');host.innerHTML='';V().scenes.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b>${tr(s.name)}`;b.onclick=()=>{seek(s._t0+.01);};host.appendChild(b);});lastSc=-1;}
+function fmtSet(f){const swap=!!V().short&&cfg.fmt!==f;if(swap)pause();cfg.fmt=f;saveCfg();if(swap){PL.t=0;rebuild();buildHead();buildScenes();buildNarr();}const L=LAYOUT[f];cv.width=L.W;cv.height=L.H;$('stage').className='stage '+f;$('stage').style.setProperty('--ar',L.W+'/'+L.H);
+  document.querySelectorAll('[data-fmt]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fmt===f)));$('mp4Sub').textContent=(f==='pc'?'1920×1080 가로':'1080×1920 세로')+' · '+MIME.label+' · 파일 하나';draw();}
+
+/* 나레이션 장면 목록 */
+function buildNarr(){
+  const host=$('narr');host.innerHTML='';const v=V();
+  v.scenes.forEach((s,i)=>{const k=recKey(v.id,s.id),r=REC[k];const d=document.createElement('div');d.className='nitem';
+    const label=r?('내 음성 '+r.dur.toFixed(1)+'초'+(r.name?' · '+r.name:'')):(cfg.nm==='tts'&&REC[k]?'임시 목소리 (내 음성 꺼둠)':'임시 목소리');
+    d.innerHTML=`<div class="nside"><button type="button" data-a="go" aria-label="${i+1}번 장면부터 보기">${String(i+1).padStart(2,'0')}</button><small>${fmtT(s._t0)}–${fmtT(s._t0+s._dur)}</small></div>
+      <div class="nmain"><div class="nhead"><b>${tr(s.name)}</b><span class="badge ${r?'rec':'tts'}"></span></div>
+      <textarea id="nt-${s.id}" aria-label="${s.name} 나레이션 대사"></textarea>
+      <div class="nbtns"><button type="button" class="sbtn" data-a="up" style="border-color:rgba(168,85,247,.55)">음성 파일 올리기</button><button type="button" class="sbtn rec" data-a="rec">● 녹음</button><button type="button" class="sbtn" data-a="hear">▶ 듣기</button><button type="button" class="sbtn" data-a="del" ${REC[k]?'':'disabled'}>음성 지우기</button><button type="button" class="sbtn" data-a="txt" ${narrText(v,s)===tr(s.narr)?'disabled':''}>대사 처음대로</button></div>
+      <div class="nmsg"></div></div>`;
+    d.querySelector('.badge').textContent=label;
+    const ta=d.querySelector('textarea');ta.value=narrText(v,s);
+    ta.addEventListener('input',()=>{TX()[v.id]=TX()[v.id]||{};if(ta.value.trim()===tr(s.narr))delete TX()[v.id][s.id];else TX()[v.id][s.id]=ta.value;saveCfg();const was=PL.playing;if(was)pause();rebuild();buildHead();if(!was)draw();
+      d.querySelector('[data-a="txt"]').disabled=narrText(v,s)===tr(s.narr);});
+    ta.addEventListener('change',()=>{buildNarr();});
+    d.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>narrAction(b.dataset.a,s,d,b));
+    d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('drag');});d.addEventListener('dragleave',()=>d.classList.remove('drag'));
+    d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('drag');const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)storeNarr(k,f,d.querySelector('.nmsg'));});
+    host.appendChild(d);});
+  lastSc=-1;uiTime(PL.t);
+}
+const RECD={mr:null,stream:null,sid:null,t0:0,timer:0};
+async function narrAction(a,s,d,btn){
+  const v=V(),k=recKey(v.id,s.id),msg=d.querySelector('.nmsg');msg.textContent='';
+  if(a==='hear'){wake();const r=REC[k];if(r&&r.buf&&cfg.nm==='rec'){const src=AU.ac.createBufferSource();src.buffer=r.buf;src.connect(AU.narr);src.start();}else speak(narrText(v,s));return;}
+  if(a==='del'){delete REC[k];await IDB.del('narr:'+k);afterAudio();return;}
+  if(a==='go'){seek(s._t0+.01);if(!PL.playing)play();return;}
+  if(a==='txt'){if(TX()[v.id])delete TX()[v.id][s.id];saveCfg();afterAudio();return;}
+  if(a==='up'){pickFile('audio/*',async f=>{await storeNarr(k,f,msg);});return;}
+  if(a==='rec'){
+    if(RECD.mr){RECD.mr.stop();return;}
+    try{if(!navigator.mediaDevices||!window.MediaRecorder)throw new Error('none');
+      const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+      pause();seek(s._t0+.01);RECD.stream=st;const chunks=[];const mr=new MediaRecorder(st);RECD.mr=mr;RECD.sid=s.id;
+      mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+      mr.onstop=async()=>{clearInterval(RECD.timer);st.getTracks().forEach(t=>t.stop());RECD.mr=null;btn.classList.remove('recording');btn.textContent='● 녹음';
+        const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});await storeNarr(k,blob,msg);};
+      mr.start();RECD.t0=Date.now();btn.classList.add('recording');btn.textContent='■ 멈추기 0초';
+      RECD.timer=setInterval(()=>{btn.textContent='■ 멈추기 '+Math.floor((Date.now()-RECD.t0)/1000)+'초';},250);
+    }catch(e){msg.textContent='이 화면에서는 마이크를 쓸 수 없어요. 휴대폰 녹음 앱으로 녹음해 「음성 파일 올리기」로 넣어 주세요.';}
+  }
+}
+/* 같이 딸려 온 음성(narration.js)을 영상 하나치만 풀어 넣는다 — 전부 한꺼번에 풀면 오래 걸려서, 고른 영상부터 넣는다.
+   내가 올린 녹음이 있거나 대사를 고친 장면은 건드리지 않는다. 새로 넣은 장면 수를 돌려준다 */
+async function loadNarr(v){
+  const N=(LANG==='en'?window.NARR_EN:window.NARR)||{},seen=new Set(),jobs=[];
+  [...(v.full||v.scenes),...(v.short||[])].forEach(sc=>{const k=recKey(v.id,sc.id),it=N[k];if(!it||REC[k]||seen.has(k))return;seen.add(k);
+    if(TX()[v.id]&&TX()[v.id][sc.id]!=null&&TX()[v.id][sc.id].trim()!==it.t)return;
+    jobs.push((async()=>{try{const bin=atob(it.d.split(',')[1]);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);const blob=new Blob([a],{type:'audio/mpeg'});
+      const buf=await decodeBlob(blob);if(!REC[k]){REC[k]={buf,dur:buf.duration,blob,name:it.n||''};return 1;}}catch(e){}return 0;})());});
+  return (await Promise.all(jobs)).reduce((x,y)=>x+y,0);
+}
+async function decodeBlob(blob){const ac=audioInit();const buf=await blob.arrayBuffer();return await new Promise((res,rej)=>{const p=ac.decodeAudioData(buf,res,rej);if(p&&p.then)p.then(res,rej);});}
+async function storeNarr(k,blob,msg){
+  try{const buf=await decodeBlob(blob);const name=blob.name||'';REC[k]={buf,dur:buf.duration,blob,name};await IDB.put('narr:'+k,{blob,name});afterAudio();return true;}
+  catch(e){if(msg)msg.textContent='이 소리 파일은 읽을 수 없어요. mp3·m4a·wav 파일로 다시 올려 주세요.';return false;}
+}
+function afterAudio(){const was=PL.playing;if(was)pause();rebuild();buildNarr();buildHead();buildScenes();draw();}
+function pickFile(accept,cb){const i=document.createElement('input');i.type='file';i.accept=accept;i.onchange=()=>{if(i.files[0])cb(i.files[0]);};i.click();}
+
+function fillVoiceSelect(){const sel=$('voice');sel.innerHTML='';if(!VOICES.length){const o=document.createElement('option');o.textContent='이 브라우저엔 한국어 목소리가 없어요';sel.appendChild(o);sel.disabled=true;return;}
+  sel.disabled=false;const cur=pickVoice();VOICES.forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name.replace(/Microsoft |Google /,'')+(v.localService?'':' (온라인)');if(cur&&v.voiceURI===cur.voiceURI)o.selected=true;sel.appendChild(o);});}
+
+function buildSettings(){
+  const rate=$('rate');rate.value=cfg.rate;$('rateO').textContent=cfg.rate.toFixed(2)+'×';
+  rate.oninput=()=>{cfg.rate=+rate.value;$('rateO').textContent=cfg.rate.toFixed(2)+'×';saveCfg();};rate.onchange=()=>{afterAudio();};
+  $('voice').onchange=e=>{cfg.voice=e.target.value;saveCfg();speak('안녕하세요. 파워터미널입니다.');};
+  document.querySelectorAll('[data-nm]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.nm===cfg.nm));b.onclick=()=>{cfg.nm=b.dataset.nm;saveCfg();document.querySelectorAll('[data-nm]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.nm===cfg.nm)));afterAudio();};});
+  // 배경음
+  const bc=$('bgmChips');bc.innerHTML='';[['tech','산뜻 테크'],['piano','잔잔 피아노'],['bright','통통 경쾌'],['custom','내 음악'],['none','없음']].forEach(([id,n])=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=n;b.setAttribute('aria-pressed',String(cfg.bgm===id));
+    b.onclick=()=>{if(id==='custom'&&!MUS.custom){pickFile('audio/*',loadCustomBgm);return;}cfg.bgm=id;saveCfg();buildSettings();if(PL.playing){musicStart(now());PL.duckOn=null;}else previewBgm();};bc.appendChild(b);});
+  $('bgmName').textContent=MUS.custom?('내 음악: '+(MUS.customName||'올린 파일')):'';
+  $('bgmUp').onclick=()=>pickFile('audio/*',loadCustomBgm);
+  const bv=$('bgmVol');bv.value=cfg.bgmVol;$('bgmVolO').textContent=Math.round(cfg.bgmVol*100);bv.oninput=()=>{cfg.bgmVol=+bv.value;$('bgmVolO').textContent=Math.round(cfg.bgmVol*100);PL.duckOn=null;saveCfg();};
+  $('duck').checked=cfg.duck;$('duck').onchange=e=>{cfg.duck=e.target.checked;PL.duckOn=null;saveCfg();};
+  // 효과음
+  const st=$('sfxTogs');st.innerHTML='';Object.keys(SFX_NAMES).forEach(k=>{const l=document.createElement('label');l.className='tog';l.innerHTML=`${SFX_NAMES[k]} <span style="display:flex;gap:8px;align-items:center"><button type="button" class="sbtn" aria-label="${SFX_NAMES[k]} 들어보기">▶</button><input type="checkbox" id="sfx-${k}"></span>`;
+    const cb=l.querySelector('input');cb.checked=!!cfg.sfx[k];cb.onchange=()=>{cfg.sfx[k]=cb.checked?1:0;saveCfg();};l.querySelector('button').onclick=e=>{e.preventDefault();wake();if(AU.ac)SFX[k](AU.ac.currentTime+.01);};st.appendChild(l);});
+  const sv=$('sfxVol');sv.value=cfg.sfxVol;$('sfxVolO').textContent=Math.round(cfg.sfxVol*100);sv.oninput=()=>{cfg.sfxVol=+sv.value;$('sfxVolO').textContent=Math.round(cfg.sfxVol*100);if(AU.ac)AU.sfx.gain.value=cfg.sfxVol;saveCfg();};
+  // 자막 · 전체
+  $('capOn').checked=cfg.cap;$('capOn').onchange=e=>{cfg.cap=e.target.checked;saveCfg();if(!PL.playing)draw();};
+  document.querySelectorAll('[data-cs]').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.cs===cfg.capScale));b.onclick=()=>{cfg.capScale=+b.dataset.cs;saveCfg();document.querySelectorAll('[data-cs]').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.cs===cfg.capScale)));if(!PL.playing)draw();};});
+  const mv=$('mVol');mv.value=cfg.master;$('mVolO').textContent=Math.round(cfg.master*100);mv.oninput=()=>{cfg.master=+mv.value;$('mVolO').textContent=Math.round(cfg.master*100);if(AU.ac)AU.out.gain.value=cfg.master;saveCfg();};
+  $('reset').onclick=()=>{const keep={texts:{},video:cfg.video,fmt:cfg.fmt};cfg=Object.assign(JSON.parse(JSON.stringify(DEF)),keep);saveCfg();buildSettings();afterAudio();$('resetMsg').textContent='소리·자막 설정과 고친 문장을 처음 값으로 돌렸어요. 녹음 파일은 그대로 남아 있어요.';};
+}
+let prevT=0;function previewBgm(){if(cfg.bgm==='none')return;wake();clearTimeout(prevT);musicStart(0);AU.music.gain.setTargetAtTime(1.8*cfg.bgmVol,AU.ac.currentTime,.1);prevT=setTimeout(()=>{if(!PL.playing)musicStop();},4000);}
+async function loadCustomBgm(f){try{MUS.customBlob=f;MUS.custom=await decodeBlob(f);MUS.customName=f.name||'';cfg.bgm='custom';saveCfg();await IDB.put('bgm:custom',f);await IDB.put('bgm:name',MUS.customName);buildSettings();}catch(e){$('bgmName').textContent='이 음악 파일은 읽을 수 없어요. mp3·m4a 파일로 올려 주세요.';}}
+
+/* ───────────────────────── 내보내기 ───────────────────────── */
+const MIME=(()=>{const list=[['video/mp4;codecs=avc1.640028,mp4a.40.2','mp4'],['video/mp4;codecs=avc1,mp4a','mp4'],['video/mp4','mp4'],['video/webm;codecs=vp9,opus','webm'],['video/webm','webm']];
+  if(!window.MediaRecorder)return{type:null,ext:null,label:'이 브라우저는 영상 저장을 못 해요'};
+  for(const [t,e] of list)if(MediaRecorder.isTypeSupported(t))return{type:t,ext:e,label:e==='mp4'?'MP4':'WEBM (크롬 최신판이면 MP4)'};return{type:'',ext:'webm',label:'WEBM'};})();
+const EXP={on:false,rec:null,chunks:[],cancel:false,batch:false};
+async function saveFile(name,blob){
+  // 클로드 화면 안에서는 페이지가 직접 내려받지 못한다 — 내려받기 권한으로 건네고, 보는 사람이 확인해야 저장된다
+  let d=null;try{if(window.claude&&window.claude.use)d=await window.claude.use('downloads');}catch(e){}
+  if(d){for(let n=0;n<3;n++){try{await d.save({filename:name,data:blob});return 'saved';}catch(e){const c=e&&e.code;if(c==='declined')return 'declined';if(c!=='rate_limited')return 'fail';await new Promise(r=>setTimeout(r,2500));}}return 'fail';}
+  try{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);return 'saved';}catch(e){return 'fail';}
+}
+function outMsg(html,kind){$('outMsg').innerHTML=html?`<div class="notice ${kind||''}">${html}</div>`:'';}
+function ttsScenes(v){v=v||V();return v.scenes.filter(s=>!recOf(v,s)).length;}
+function canExport(){if(!MIME.type&&MIME.type!==''){outMsg('이 브라우저는 영상 파일 만들기를 지원하지 않아요. 크롬이나 엣지 최신판에서 열어 주세요.','bad');return false;}return true;}
+function fileName(v,fmt){return `PowerTerminal-${tr(catOf(v).name)}-${tr(v.title)}-${fmt==='pc'?'PC':(LANG==='en'?'Shorts':'쇼츠')}.${MIME.ext}`.replace(/\s+/g,'_').replace(/[\\/:*?"<>|]/g,'');}
+function askExport(){
+  if(EXP.on||EXP.batch||!canExport())return;
+  const n=ttsScenes();const L=LAYOUT[cfg.fmt];
+  outMsg(`<b>${L.W}×${L.H} ${MIME.ext.toUpperCase()}</b> 파일 하나를 만들어요. 영상 길이만큼(<b>${fmtT(TOTAL)}</b>) 실제로 재생하면서 녹화하니, 끝날 때까지 이 탭을 앞에 띄워 두세요.`+
+    (n?`<br>⚠ 장면 ${n}개가 <b>임시 목소리</b>예요. 브라우저 읽어주기는 영상 파일에 녹음되지 않아서 그 장면은 <b>자막·배경음·효과음만</b> 들어가요. 내 녹음을 넣으면 목소리까지 들어갑니다.`:'<br>모든 장면에 내 녹음이 들어 있어요. 목소리까지 함께 저장됩니다.')+
+    `<div class="acts"><button type="button" class="sbtn" id="expGo" style="background:var(--grad);border:0;color:#fff">녹화 시작</button><button type="button" class="sbtn" id="expNo">취소</button></div>`);
+  $('expGo').onclick=()=>exportStart(false);$('expNo').onclick=()=>outMsg('');
+}
+/* 지금 고른 영상을 지금 비율로 녹화해 파일 하나로 저장한다. 끝나면 결과를 돌려준다: {name,size} · 'cancel' · 'declined' · 'fail' · 'blocked' */
+function exportStart(batch){
+  return new Promise(async done=>{
+    if(!batch)outMsg('');const ac=wake();if(ac&&ac.state!=='running'){try{await ac.resume();}catch(e){}}
+    pause();PL.t=0;draw();
+    try{const vs=cv.captureStream(30);const tracks=[...vs.getVideoTracks()];if(AU.dest)tracks.push(...AU.dest.stream.getAudioTracks());
+      const opt={videoBitsPerSecond:cfg.fmt==='pc'?10e6:8e6,audioBitsPerSecond:192000};if(MIME.type)opt.mimeType=MIME.type;
+      const rec=new MediaRecorder(new MediaStream(tracks),opt);EXP.chunks=[];EXP.rec=rec;EXP.on=true;EXP.cancel=false;
+      rec.ondataavailable=e=>{if(e.data&&e.data.size)EXP.chunks.push(e.data);};
+      rec.onstop=async()=>{EXP.on=false;$('busy').hidden=true;document.body.classList.remove('exporting');if(EXP.cancel){if(!batch)outMsg('영상 만들기를 멈췄어요.');done('cancel');return;}
+        const blob=new Blob(EXP.chunks,{type:(MIME.type||'video/webm').split(';')[0]});EXP.chunks=[];const name=fileName(V(),cfg.fmt);
+        const r=await saveFile(name,blob);
+        if(!batch)outMsg(r==='saved'?`<b>${name}</b> 저장했어요 (${(blob.size/1048576).toFixed(1)}MB). 유튜브·인스타에 바로 올릴 수 있어요.`:r==='declined'?'저장을 취소했어요.':'저장하지 못했어요. 이 페이지를 크롬으로 직접 열어 다시 내보내 보세요.',r==='saved'?'ok':'bad');
+        done(r==='saved'?{name,size:blob.size}:r);};
+      rec.start(1000);$('busy').hidden=false;
+      const label=batch||'영상 만드는 중';
+      const tick=()=>{if(!EXP.on)return;$('busyT').textContent=label+' '+Math.round(now()/TOTAL*100)+'%';setTimeout(tick,300);};tick();
+      setTimeout(play,250);
+    }catch(e){EXP.on=false;if(!batch)outMsg('이 화면에서는 영상 녹화가 막혀 있어요. 이 페이지를 크롬으로 직접 열어 거기서 내보내 주세요.','bad');done('blocked');}
+  });
+}
+function exportFinish(){if(EXP.rec&&EXP.rec.state!=='inactive')EXP.rec.stop();}
+$('busyX').onclick=()=>{EXP.cancel=true;pause();exportFinish();};
+
+/* ───────── 전체 영상 내보내기 — 영상마다, 비율마다 파일 하나씩 ───────── */
+const FMT_NAME={pc:'PC 16:9',short:'모바일(쇼츠) 9:16'};
+function batchPlan(fmts){return fmts.flatMap(f=>VIDEOS.map(v=>[v,f]));}
+function askExportAll(){
+  if(EXP.on||EXP.batch||!canExport())return;
+  outMsg(`영상 <b>${VIDEOS.length}편</b>을 하나씩 따로 <b>${MIME.ext.toUpperCase()}</b> 파일로 저장해요. 어떤 판을 만들까요?`+
+    `<br>한 편씩 실제로 재생하면서 녹화하니 <b>전체 재생 시간만큼</b> 걸려요. 끝날 때까지 이 탭을 앞에 띄워 두세요. 브라우저가 "여러 파일 내려받기"를 물으면 허용해 주세요.`+
+    `<br>내 녹음이 없는 장면은 목소리 없이 자막·배경음·효과음만 들어가요.`+
+    `<div class="acts"><button type="button" class="sbtn" data-all="pc">PC판만 (${VIDEOS.length}개)</button><button type="button" class="sbtn" data-all="short">모바일판만 (${VIDEOS.length}개)</button>`+
+    `<button type="button" class="sbtn" data-all="pc,short" style="background:var(--grad);border:0;color:#fff">PC + 모바일 (${VIDEOS.length*2}개)</button><button type="button" class="sbtn" id="allNo">취소</button></div>`);
+  document.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>exportAll(b.dataset.all.split(',')));$('allNo').onclick=()=>outMsg('');
+}
+async function exportAll(fmts){
+  if(EXP.on||EXP.batch)return;
+  const plan=batchPlan(fmts),back={video:cfg.video,fmt:cfg.fmt,pmode:cfg.pmode},okList=[],badList=[];let stopped=false;
+  EXP.batch=true;document.body.classList.add('batch');cfg.pmode='off';
+  for(let i=0;i<plan.length&&!stopped;i++){
+    const [v,f]=plan[i];pause();cfg.video=v.id;cfg.fmt=f;PL.t=0;
+    outMsg(`전체 내보내기 <b>${i+1} / ${plan.length}</b> — ${tr(v.title)} · ${FMT_NAME[f]}<br>저장 ${okList.length}개${badList.length?' · 실패 '+badList.length+'개':''}. 멈추려면 영상 위의 「그만」을 누르세요.`);
+    try{await loadNarr(v);}catch(e){}
+    rebuild();buildAll();fmtSet(f);draw();
+    const r=await exportStart(`${i+1}/${plan.length} 만드는 중`);
+    if(r&&r.name)okList.push(r.name);else if(r==='cancel')stopped=true;else{badList.push(tr(v.title)+' · '+FMT_NAME[f]);if(r==='blocked')stopped=true;}
+    await new Promise(q=>setTimeout(q,500));
+  }
+  EXP.batch=false;document.body.classList.remove('batch');
+  cfg.video=back.video;cfg.pmode=back.pmode;PL.t=0;try{await loadNarr(V());}catch(e){}rebuild();buildAll();fmtSet(back.fmt);pmodeSet(back.pmode);draw();
+  outMsg(`${stopped?'전체 내보내기를 멈췄어요.':'전체 내보내기가 끝났어요.'} 저장 <b>${okList.length}개</b> / 전체 ${plan.length}개.`+
+    (badList.length?`<br>저장하지 못한 것: ${badList.join(', ')}`:''),(!stopped&&!badList.length)?'ok':'bad');
+}
+
+/* ───────── 페이지 공유하기 — 목차와 영상만 보이는 화면 ───────── */
+function shareLink(){try{return location.href.split('#')[0]+'#share'+(LANG==='en'?'-en':'');}catch(e){return '#share';}}
+function shareEnter(preview){
+  SHARE=true;document.body.classList.add('share');document.body.classList.toggle('preview',!!preview);
+  if(preview){const link=shareLink();
+    $('shareTxt').innerHTML=`<b>공유 화면이에요.</b> 받는 사람에게는 목차와 영상만 보여요. 주소 끝에 <b>#share</b> 를 붙여 보내세요: <code>${link.replace(/[<>&"]/g,'')}</code> <span id="shareCopied"></span>`;
+    try{navigator.clipboard.writeText(link).then(()=>{$('shareCopied').textContent='(주소를 복사했어요)';},()=>{});}catch(e){}
+    try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}}
+}
+function shareLeave(){SHARE=false;document.body.classList.remove('share','preview');}
+
+/* ───────────────────────── 연결 ───────────────────────── */
+function buildAll(){buildToc();buildHead();buildScenes();buildNarr();}
+/* 끝난 뒤 어떻게 할지 — 단추를 누를 때마다 바뀐다: 한 편만 → 이어서 재생(마지막 영상에서 멈춤) → 하나 반복 → 전체 반복 */
+const PMODES=[['off','한 편만'],['next','이어서 재생'],['one','하나 반복'],['all','전체 반복']];
+async function afterEnd(){
+  const m=cfg.pmode;if(m==='off'||EXP.on||EXP.batch||PL.playing||PL.t<TOTAL-.05)return;
+  if(m==='one'){PL.t=0;play();return;}
+  const i=VIDEOS.indexOf(V());const nv=VIDEOS[i+1]||(m==='all'?VIDEOS[0]:null);if(!nv)return;
+  cfg.video=nv.id;saveCfg();PL.t=0;await loadNarr(nv);if(cfg.video!==nv.id)return;rebuild();buildAll();draw();play();
+}
+function pmodeSet(m){if(!PMODES.some(q=>q[0]===m))m='off';cfg.pmode=m;saveCfg();const b=$('bAuto');b.textContent=PMODES.find(q=>q[0]===m)[1];b.setAttribute('aria-pressed',String(m!=='off'));}
+$('bAuto').onclick=()=>pmodeSet(PMODES[(PMODES.findIndex(q=>q[0]===cfg.pmode)+1)%PMODES.length][0]);
+/* 언어 바꾸기 — 설정에 적어 두고 페이지를 다시 연다 */
+function langSet(l){if(l===LANG||EXP.on||EXP.batch)return;cfg.lang=l;try{localStorage.setItem(LSK,JSON.stringify(cfg));}catch(e){}try{location.hash='#'+(SHARE?'share-':'')+l;}catch(e){}location.reload();}
+document.querySelectorAll('[data-lang]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.lang===LANG));b.onclick=()=>langSet(b.dataset.lang);});
+$('bigPlay').onclick=e=>{e.stopPropagation();play();};
+$('stage').addEventListener('click',e=>{if(EXP.on||e.target.closest('button'))return;PL.playing?pause():play();});
+$('bPlay').onclick=()=>{if(EXP.on)return;PL.playing?pause():play();};
+$('bRe').onclick=()=>{if(EXP.on)return;seek(0);if(!PL.playing)play();};
+const scrub=$('scrub');scrub.addEventListener('pointerdown',()=>scrub._drag=true);scrub.addEventListener('pointerup',()=>scrub._drag=false);
+scrub.addEventListener('input',()=>{if(EXP.on)return;seek(+scrub.value/1000);});
+$('bFs').onclick=()=>{const st=$('stage');try{if(document.fullscreenElement)document.exitFullscreen();else if(st.requestFullscreen)st.requestFullscreen().catch(()=>{});}catch(e){}};
+document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{if(EXP.on)return;fmtSet(b.dataset.fmt);});
+$('bMp4').onclick=askExport;
+$('bulkUp').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='audio/*';i.multiple=true;
+  i.onchange=async()=>{const fs=[...i.files].sort((a,b)=>a.name.localeCompare(b.name,'ko',{numeric:true}));const v=V();let ok=0;$('bulkMsg').textContent='올리는 중…';
+    for(let j=0;j<fs.length&&j<v.scenes.length;j++){if(await storeNarr(recKey(v.id,v.scenes[j].id),fs[j],null))ok++;}
+    $('bulkMsg').textContent=`파일 이름 순서대로 ${ok}개 장면에 넣었어요 (01번 장면부터). 파일 이름 앞에 01, 02…를 붙여 두면 순서가 맞아요.`+(fs.length>v.scenes.length?` 장면보다 많은 ${fs.length-v.scenes.length}개는 넣지 않았어요.`:'');};i.click();};
+$('bAll').onclick=askExportAll;$('bShare').onclick=()=>{if(EXP.on||EXP.batch)return;pause();outMsg('');shareEnter(true);};$('shareBack').onclick=shareLeave;
+document.addEventListener('keydown',e=>{if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)||EXP.on||EXP.batch)return;
+  if(e.key===' '){e.preventDefault();PL.playing?pause():play();}else if(e.key==='ArrowRight'){seek(now()+5);}else if(e.key==='ArrowLeft'){seek(now()-5);}});
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}else fillVoiceSelect();
+
+(async function boot(){
+  if(SOLO)document.body.classList.add('solo');
+  if(SHARE){shareEnter(false);try{if(window.innerWidth<700&&window.innerHeight>window.innerWidth)cfg.fmt='short';}catch(e){}}
+  rebuild();buildSettings();buildAll();fmtSet(cfg.fmt);pmodeSet(cfg.pmode);
+  try{await document.fonts.load(`700 40px "IBM Plex Sans KR"`);await document.fonts.load(`500 20px "IBM Plex Sans KR"`);await document.fonts.load(`600 20px "IBM Plex Sans KR"`);}catch(e){}
+  draw();
+  // 저장해 둔 녹음·음악 불러오기
+  try{
+    if(SOLO){const d2b=u=>{const [h,b]=u.split(',');const m=h.match(/data:([^;]+)/);const bin=atob(b);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m?m[1]:'audio/webm'});};
+      for(const k in (SOLO.audio||{})){const it=SOLO.audio[k];const blob=d2b(it.d||it);try{const buf=await decodeBlob(blob);REC[k]={buf,dur:buf.duration,blob,name:it.n||''};}catch(e){}}
+      if(SOLO.bgm){const blob=d2b(SOLO.bgm);try{MUS.custom=await decodeBlob(blob);MUS.customBlob=blob;MUS.customName=SOLO.bgmName||'';}catch(e){}}}
+    else{const keys=await IDB.keys();for(const key of keys||[]){if(typeof key!=='string')continue;
+      if(key.startsWith('narr:')){const val=await IDB.get(key);const blob=val&&val.blob?val.blob:val;if(blob){try{const buf=await decodeBlob(blob);REC[key.slice(5)]={buf,dur:buf.duration,blob,name:(val&&val.name)||''};}catch(e){}}}
+      if(key==='bgm:custom'){const blob=await IDB.get(key);if(blob){try{MUS.custom=await decodeBlob(blob);MUS.customBlob=blob;}catch(e){}}}
+      if(key==='bgm:name')MUS.customName=await IDB.get(key)||'';}}
+  }catch(e){}
+  await loadNarr(V());
+  if(cfg.bgm==='custom'&&!MUS.custom)cfg.bgm='tech';
+  rebuild();buildSettings();buildAll();draw();
+})();
+setTimeout(async()=>{for(const v of VIDEOS){if(v.id===cfg.video)continue;await loadNarr(v);await new Promise(r=>setTimeout(r,120));}},1500);
+window.__ccv={share:()=>SHARE,shareEnter,shareLeave,shareLink,batchPlan,fileName,exp:EXP,
+  pick:id=>{pause();cfg.video=id;PL.t=0;rebuild();buildAll();draw();},scenes:()=>V().scenes.map(s=>({id:s.id,t0:s._t0,dur:s._dur})),videos:()=>VIDEOS.map(v=>v.id),
+  miss:()=>[...TR_MISS],render:t=>{render(t);},total:()=>TOTAL,fmt:fmtSet,afterEnd,
+  // 영상별 대사 목록 (음성 만들 때 씀): [영상id/장면id, 대사]
+  lines:()=>VIDEOS.flatMap(v=>{const seen=new Set();return [...(v.full||v.scenes),...(v.short||[])].filter(q=>!seen.has(q.id)&&seen.add(q.id)).map(q=>[recKey(v.id,q.id),tr(q.narr)]);})};
+})();
+</script>
