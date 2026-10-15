@@ -206,7 +206,7 @@ body.batch .rail,body.batch .head .fmt,body.batch .ctl,body.batch .scenes,body.b
     </div>
 
     <nav class="panel" aria-label="영상 목차">
-      <h2>목차</h2>
+      <h2 id="tocH">목차</h2>
       <div id="toc"></div>
     </nav>
 
@@ -1526,6 +1526,8 @@ const LSK='pt-video-cfg-v1';
 let cfg=JSON.parse(JSON.stringify(DEF));
 try{const s=JSON.parse(localStorage.getItem(LSK)||'null');if(s)cfg=Object.assign(cfg,s,{sfx:Object.assign({},DEF.sfx,s.sfx||{})});}catch(e){}
 if(SOLO&&SOLO.cfg)cfg=Object.assign(cfg,SOLO.cfg);
+{const qv=new URLSearchParams(location.search).get('v');if(qv&&VIDEOS.some(v=>v.id===qv))cfg.video=qv;}
+{const h=document.getElementById('tocH');if(h&&LANG!=='ko')h.textContent='Contents';}
 cfg.lang=LANG;
 let saveT=0;function saveCfg(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LSK,JSON.stringify(cfg));}catch(e){}},250);}
 
@@ -2058,7 +2060,7 @@ async function afterEnd(){
   const i=VIDEOS.indexOf(V());const nv=VIDEOS[i+1]||(m==='all'?VIDEOS[0]:null);if(!nv)return;
   cfg.video=nv.id;saveCfg();PL.t=0;await loadNarr(nv);if(cfg.video!==nv.id)return;rebuild();buildAll();draw();play();
 }
-function pmodeSet(m){if(!PMODES.some(q=>q[0]===m))m='off';cfg.pmode=m;saveCfg();const b=$('bAuto');b.textContent=PMODES.find(q=>q[0]===m)[1];b.setAttribute('aria-pressed',String(m!=='off'));}
+function pmodeSet(m){if(!PMODES.some(q=>q[0]===m))m='off';cfg.pmode=m;saveCfg();const b=$('bAuto');b.textContent=tr(PMODES.find(q=>q[0]===m)[1]);if(LANG!=='ko')b.title='Changes each time you press it: play once · play next · repeat one · repeat all';b.setAttribute('aria-pressed',String(m!=='off'));}
 $('bAuto').onclick=()=>pmodeSet(PMODES[(PMODES.findIndex(q=>q[0]===cfg.pmode)+1)%PMODES.length][0]);
 /* 언어 바꾸기 — 설정에 적어 두고 페이지를 다시 연다 */
 function langSet(l){if(l===LANG||EXP.on||EXP.batch)return;cfg.lang=l;try{localStorage.setItem(LSK,JSON.stringify(cfg));}catch(e){}try{location.hash='#'+(SHARE?'share-':'')+l;}catch(e){}location.reload();}

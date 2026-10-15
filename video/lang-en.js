@@ -1,6 +1,8 @@
 /* 영문판 글 — 화면에 그리는 한국어 글을 그대로 열쇠로 써서 영어로 바꾼다 (player.html 의 tr() 가 이 표를 먼저 찾는다).
    새 장면을 더하면 영어판으로 한 번 돌려 window.__ccv.miss() 에 남는 글을 여기에 채운다. */
 window.EN_TEXT={
+/* ── 재생 단추 ── */
+"한 편만":"Play once","이어서 재생":"Play next","하나 반복":"Repeat one","전체 반복":"Repeat all",
 /* ── PT 화면 ── */
 "🧭 도우미 설치":"🧭 Install helper","🌐 한국어  ▾":"🌐 English  ▾","⏱ 자동 실행":"⏱ Auto-run","+ 세션":"+ Session","85% · 8.4GB 남음":"85% · 8.4GB free",
 "클로드 세션":"Claude session","클로드 주간":"Claude weekly","🧭 도우미 · 켜짐":"🧭 Helper · on","🧭 도우미 · 꺼짐":"🧭 Helper · off",
